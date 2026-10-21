@@ -134,6 +134,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            margin-bottom: 20px;
         }
         .result-item {
             display: flex;
@@ -146,7 +147,6 @@
         .result-label { font-weight: 600; font-size: 14px; }
         .result-data { font-size: 18px; font-weight: bold; color: var(--danger); text-align: right; }
         
-        /* Highlight the Timer Result */
         .timer-highlight {
             color: var(--success) !important; 
             font-size: 24px !important; 
@@ -155,13 +155,41 @@
             border-radius: 5px;
         }
 
+        /* TRIP PLANNER CSS */
+        .trip-planner {
+            background-color: #2c3e50;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .trip-planner h3 {
+            margin: 0 0 10px 0;
+            color: var(--primary);
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        .trip-planner input {
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 18px;
+        }
+        .trip-alert {
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 14px;
+            display: none; /* Hidden by default */
+        }
+        .alert-safe { background-color: var(--success); color: white; display: block; }
+        .alert-danger { background-color: var(--danger); color: white; display: block; }
+
         .note {
             font-size: 12px;
-            color: #f1c40f;
+            color: #bdc3c7;
             text-align: center;
-            margin-top: 20px;
             line-height: 1.4;
-            font-weight: bold;
         }
     </style>
 </head>
@@ -203,8 +231,15 @@
         </div>
     </div>
 
+    <!-- NEW TRIP PLANNER SECTION -->
+    <div class="trip-planner">
+        <h3>🗺️ Trip Planner</h3>
+        <input type="number" id="tripDistance" placeholder="Enter trip distance (km)" step="0.5">
+        <div id="tripResult" class="trip-alert"></div>
+    </div>
+
     <div class="note">
-        * Set your plug timer based on the green box above. Trust the timer and your charger's green light for safety!
+        * Range is an estimate. Always keep a 20% buffer for unexpected detours or strong headwinds.
     </div>
 </div>
 
@@ -215,6 +250,10 @@
     const timerValueEl = document.getElementById('timerValue');
     const rangeDistanceEl = document.getElementById('rangeDistance');
     const batteryFill = document.getElementById('batteryFill');
+    
+    // Trip Planner elements
+    const tripDistanceInput = document.getElementById('tripDistance');
+    const tripResultEl = document.getElementById('tripResult');
 
     if(localStorage.getItem('ebike_voltage')) {
         voltageInput.value = localStorage.getItem('ebike_voltage');
@@ -223,7 +262,6 @@
         loadToggle.checked = true;
     }
 
-    // Data: [Max Volts, Min Volts, Percent String, Est Percent Number, Hours Number]
     const voltData = [
         [70.00, 66.4, "100%", 100, 0], 
         [66.3, 66.0, "95%", 95, 3.5],
@@ -247,6 +285,8 @@
         [53.8, 53.2, "5%", 5, 10.0],
         [53.1, 50.0, "0%", 0, 10.0] 
     ];
+
+    let currentMaxRange = 0; // Global variable to store range for trip planner
 
     function calculateFromVolts() {
         let volts = parseFloat(voltageInput.value);
@@ -272,7 +312,6 @@
             if (volts <= maxV && volts >= minV) {
                 batteryPercentEl.innerText = percentStr;
                 
-                // Update Visual Battery
                 batteryFill.style.width = estPercent + '%';
                 if (estPercent > 50) {
                     batteryFill.style.backgroundColor = "var(--success)";
@@ -282,15 +321,12 @@
                     batteryFill.style.backgroundColor = "var(--danger)";
                 }
 
-                // Update Timer Value
                 if (hoursNum === 0) {
                     timerValueEl.innerText = "Ready";
                 } else {
-                    // Format nicely (e.g., "6.5 Hrs")
                     timerValueEl.innerText = hoursNum + " Hrs";
                 }
 
-                // Update Range
                 let minDistance, maxDistance;
                 if (isHeavy) {
                     minDistance = (estPercent / 100) * 14; 
@@ -300,6 +336,9 @@
                     maxDistance = (estPercent / 100) * 30;
                 }
                 
+                // Store the safe max range for the Trip Planner
+                currentMaxRange = minDistance; 
+
                 if (estPercent === 100) {
                     rangeDistanceEl.innerText = isHeavy ? "14 - 21 km" : "20 - 30 km";
                 } else if (estPercent === 0) {
@@ -315,18 +354,46 @@
 
         if (!found) {
             if (volts > 66.4) {
-                batteryPercentEl.innerText = "100% (Surface)";
+                currentMaxRange = isHeavy ? 14 : 20;
+                batteryPercentEl.innerText = "100%";
                 timerValueEl.innerText = "Ready";
                 batteryFill.style.width = "100%";
                 batteryFill.style.backgroundColor = "var(--success)";
                 rangeDistanceEl.innerText = isHeavy ? "14 - 21 km" : "20 - 30 km";
             } else if (volts < 50.0) {
+                currentMaxRange = 0;
                 batteryPercentEl.innerText = "EMPTY";
                 timerValueEl.innerText = "10+ Hrs";
                 batteryFill.style.width = "0%";
                 batteryFill.style.backgroundColor = "var(--danger)";
                 rangeDistanceEl.innerText = "0 km";
             }
+        }
+        
+        // Re-check the trip planner whenever the voltage changes
+        checkTrip();
+    }
+
+    function checkTrip() {
+        let tripDistance = parseFloat(tripDistanceInput.value);
+        
+        // If the box is empty, hide the alert
+        if (isNaN(tripDistance) || tripDistance <= 0) {
+            tripResultEl.className = "trip-alert";
+            tripResultEl.style.display = "none";
+            return;
+        }
+
+        tripResultEl.style.display = "block";
+
+        // Compare trip distance to the safe minimum range
+        if (tripDistance <= currentMaxRange) {
+            let remaining = currentMaxRange - tripDistance;
+            tripResultEl.className = "trip-alert alert-safe";
+            tripResultEl.innerText = `✅ Safe! You will have ~${remaining.toFixed(1)} km left.`;
+        } else {
+            tripResultEl.className = "trip-alert alert-danger";
+            tripResultEl.innerText = `⚠️ WARNING: Too far! Charge first or you might get stranded.`;
         }
     }
 
@@ -335,10 +402,14 @@
         timerValueEl.innerText = "--";
         rangeDistanceEl.innerText = "--";
         batteryFill.style.width = "0%";
+        currentMaxRange = 0;
+        checkTrip();
     }
 
     voltageInput.addEventListener('input', calculateFromVolts);
     loadToggle.addEventListener('change', calculateFromVolts);
+    tripDistanceInput.addEventListener('input', checkTrip); // Listen for typing in trip planner
+    
     calculateFromVolts();
 </script>
 
