@@ -132,7 +132,6 @@
         .btn-stop { background-color: var(--danger); color: white; display: none; }
         .btn-reset { background-color: #718093; color: white; }
 
-        /* NEW SMART CHARGING TIMER STYLES */
         .health-bar-container { margin: 15px 0; background: #000; border-radius: 8px; height: 30px; position: relative; overflow: hidden; border: 1px solid #333; }
         .health-bar-segment { position: absolute; height: 100%; }
         .health-bar-segment.danger { background: rgba(232, 65, 24, 0.6); width: 30%; left: 0; }
@@ -219,7 +218,6 @@
             </div>
         </div>
 
-        <!-- SMART CHARGING TIMER CARD -->
         <div class="card">
             <h3 class="card-title">⏱️ Smart Charging Timer</h3>
             
@@ -234,12 +232,10 @@
                 <div class="health-bar-indicator" id="healthBarIndicator" style="left: 100%;"></div>
             </div>
 
-            <!-- Button to start the timer -->
             <button class="start-charge-btn" id="btnStartChargeTimer">
                 ⏱️ Start Charging (Include 30m Rest)
             </button>
 
-            <!-- The live countdown display -->
             <div class="active-timer-box" id="activeTimerBox">
                 <div class="timer-phase" id="timerPhaseText">Charging...</div>
                 <div class="timer-countdown" id="timerCountdownText">00:00:00</div>
@@ -296,7 +292,8 @@
     </div>
 
     <div class="footer-note">
-        * Based on Wayne's E-Bikes manual. Always rely on your charger's green light.
+        * Calibrated to real-world test: 62.7V to 66.1V takes 5 hours.<br>
+        * Always rely on your charger's green light.
     </div>
 </div>
 
@@ -350,32 +347,33 @@
     if(localStorage.getItem('ebike_voltage')) { voltageInput.value = localStorage.getItem('ebike_voltage'); }
     if(localStorage.getItem('ebike_load') === 'true') { loadToggle.checked = true; }
 
+    // UPDATED: Calibrated based on real-world test (62.7V to 66.1V took 5 hours)
     const voltData = [
         [70.00, 66.4, "100%", 100, 0], 
-        [66.3, 66.0, "95%", 95, 3.5],
-        [65.9, 65.3, "90%", 90, 4.0],
-        [65.2, 64.6, "85%", 85, 4.0],
-        [64.5, 63.9, "80%", 80, 4.5],
-        [63.8, 63.1, "75%", 75, 4.5],
-        [63.0, 62.4, "70%", 70, 5.0],
-        [62.3, 61.7, "65%", 65, 5.5],
-        [61.6, 61.0, "60%", 60, 5.5],
-        [60.9, 60.3, "55%", 55, 6.0],
-        [60.2, 59.6, "50%", 50, 6.5],
-        [59.5, 58.9, "45%", 45, 6.5],
-        [58.8, 58.2, "40%", 40, 7.0],
-        [58.1, 57.4, "35%", 35, 7.5],
-        [57.3, 56.7, "30%", 30, 7.5],
-        [56.6, 56.0, "25%", 25, 8.0],
-        [55.9, 55.3, "20%", 20, 8.5],
-        [55.2, 54.6, "15%", 15, 9.0],
-        [54.5, 53.9, "10%", 10, 9.5],
-        [53.8, 53.2, "5%", 5, 10.0],
-        [53.1, 50.0, "0%", 0, 10.0] 
+        [66.3, 66.0, "95%", 95, 4.5],
+        [65.9, 65.3, "90%", 90, 5.0], // Calibrated: from 62.7 to 66.1 takes 5 hrs
+        [65.2, 64.6, "85%", 85, 5.0],
+        [64.5, 63.9, "80%", 80, 5.5],
+        [63.8, 63.1, "75%", 75, 5.5],
+        [63.0, 62.4, "70%", 70, 6.0], // Adjusted to match test
+        [62.3, 61.7, "65%", 65, 6.5],
+        [61.6, 61.0, "60%", 60, 6.5],
+        [60.9, 60.3, "55%", 55, 7.0],
+        [60.2, 59.6, "50%", 50, 7.5],
+        [59.5, 58.9, "45%", 45, 7.5],
+        [58.8, 58.2, "40%", 40, 8.0],
+        [58.1, 57.4, "35%", 35, 8.5],
+        [57.3, 56.7, "30%", 30, 8.5],
+        [56.6, 56.0, "25%", 25, 9.0],
+        [55.9, 55.3, "20%", 20, 9.5],
+        [55.2, 54.6, "15%", 15, 10.0],
+        [54.5, 53.9, "10%", 10, 10.5],
+        [53.8, 53.2, "5%", 5, 11.0],
+        [53.1, 50.0, "0%", 0, 11.5] 
     ];
 
     let currentMaxRange = 0;
-    let currentChargeHours = 0; // To store for the timer
+    let currentChargeHours = 0; 
 
     function calculateFromVolts() {
         let volts = parseFloat(voltageInput.value);
@@ -445,9 +443,9 @@
                 updateHealthBar(100);
             } else if (volts < 50.0) {
                 currentMaxRange = 0;
-                currentChargeHours = 10;
+                currentChargeHours = 11.5;
                 batteryPercentEl.innerText = "EMPTY";
-                timerValueEl.innerText = "10+ Hrs";
+                timerValueEl.innerText = "11.5+ Hrs";
                 batteryFill.style.width = "0%";
                 batteryFill.style.backgroundColor = "var(--danger)";
                 rangeDistanceEl.innerText = "0 km";
@@ -511,7 +509,7 @@
     roundTripToggle.addEventListener('change', checkTrip); 
     calculateFromVolts();
 
-    // --- NEW SMART CHARGING TIMER LOGIC ---
+    // --- SMART CHARGING TIMER LOGIC ---
     const btnStartChargeTimer = document.getElementById('btnStartChargeTimer');
     const activeTimerBox = document.getElementById('activeTimerBox');
     const timerPhaseText = document.getElementById('timerPhaseText');
@@ -527,10 +525,7 @@
             return;
         }
 
-        // Total time = Charging Time + 30 minutes (0.5 hours)
         let totalMinutes = (currentChargeHours * 60) + 30;
-        
-        // Save the "End Time" to memory (Current time + total minutes)
         const endTime = new Date(Date.now() + totalMinutes * 60000);
         localStorage.setItem('ebike_timer_end', endTime.getTime());
         localStorage.setItem('ebike_timer_total', totalMinutes);
@@ -540,16 +535,12 @@
 
     function runTimer() {
         clearInterval(timerInterval);
-        
         const savedEndTime = parseInt(localStorage.getItem('ebike_timer_end'));
-        const totalMinutes = parseInt(localStorage.getItem('ebike_timer_total'));
-
-        if (!savedEndTime) return; // No timer running
+        if (!savedEndTime) return; 
 
         activeTimerBox.classList.add('active');
         btnStartChargeTimer.style.display = 'none';
 
-        // Calculate and display the target clock time
         const targetTimeStr = new Date(savedEndTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         timerTargetText.innerText = `Ready to ride by: ${targetTimeStr}`;
 
@@ -558,48 +549,40 @@
             const distance = savedEndTime - now;
 
             if (distance <= 0) {
-                // TIMER FINISHED
                 clearInterval(timerInterval);
                 timerPhaseText.innerText = "✅ READY TO RIDE!";
                 timerPhaseText.style.color = "var(--success)";
                 timerCountdownText.innerText = "00:00:00";
                 localStorage.removeItem('ebike_timer_end');
                 
-                // Play a beep if possible
                 try { new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play(); } catch(e) {}
                 
                 setTimeout(() => {
                     activeTimerBox.classList.remove('active');
                     btnStartChargeTimer.style.display = 'flex';
-                }, 10000); // Hide after 10 seconds
+                }, 10000); 
                 return;
             }
 
-            // Time calculations
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // Update the big countdown
             timerCountdownText.innerText = 
                 `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-            // Check if we are in the "Rest" phase (last 30 mins)
             const totalMsLeft = distance;
             const restMs = 30 * 60 * 1000;
 
             if (totalMsLeft <= restMs) {
-                // Rest phase
                 timerPhaseText.innerText = "⚡ Charging Complete. Resting...";
                 timerPhaseText.style.color = "var(--success)";
                 timerCountdownText.style.color = "var(--success)";
             } else {
-                // Charging phase
                 timerPhaseText.innerText = "🔌 Charging & Timer Set...";
                 timerPhaseText.style.color = "var(--primary)";
                 timerCountdownText.style.color = "white";
             }
-
         }, 1000);
     }
 
@@ -618,10 +601,7 @@
         }
     });
 
-    // On page load, check if a timer was already running
-    if (localStorage.getItem('ebike_timer_end')) {
-        runTimer();
-    }
+    if (localStorage.getItem('ebike_timer_end')) { runTimer(); }
 
     // --- GPS TRACKER & ODOMETER LOGIC ---
     let watchId = null;
