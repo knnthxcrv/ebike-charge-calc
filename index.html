@@ -173,7 +173,6 @@
             padding: 10px;
             font-size: 18px;
         }
-        /* New styles for Round Trip toggle inside Trip Planner */
         .trip-toggle {
             display: flex;
             align-items: center;
@@ -226,6 +225,7 @@
         .btn-group {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap; /* Allows buttons to wrap on very small screens */
         }
         button {
             flex: 1;
@@ -236,10 +236,12 @@
             border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
+            min-width: 80px;
         }
         .btn-start { background-color: var(--success); color: white; }
-        .btn-stop { background-color: var(--warning); color: white; }
-        .btn-reset { background-color: var(--danger); color: white; }
+        .btn-pause { background-color: var(--primary); color: var(--dark); display: none; }
+        .btn-stop { background-color: var(--danger); color: white; display: none; }
+        .btn-reset { background-color: #7f8c8d; color: white; }
         button:active { transform: scale(0.95); }
 
         .note {
@@ -290,8 +292,6 @@
 
     <div class="trip-planner">
         <h3>🗺️ Trip Planner</h3>
-        
-        <!-- NEW ROUND TRIP TOGGLE -->
         <div class="trip-toggle">
             <span>Round Trip? (Double Distance)</span>
             <label class="switch">
@@ -299,7 +299,6 @@
                 <span class="slider"></span>
             </label>
         </div>
-
         <input type="number" id="tripDistance" placeholder="Enter one-way distance (km)" step="0.5">
         <div id="tripResult" class="trip-alert"></div>
     </div>
@@ -320,7 +319,8 @@
 
         <div class="btn-group">
             <button class="btn-start" id="btnStartGps">Start</button>
-            <button class="btn-stop" id="btnStopGps" style="display: none;">Stop</button>
+            <button class="btn-pause" id="btnPauseGps">Pause</button>
+            <button class="btn-stop" id="btnStopGps">Stop</button>
             <button class="btn-reset" id="btnResetGps">Reset</button>
         </div>
     </div>
@@ -340,12 +340,10 @@
     const rangeDistanceEl = document.getElementById('rangeDistance');
     const batteryFill = document.getElementById('batteryFill');
     
-    // Trip Planner Elements
     const tripDistanceInput = document.getElementById('tripDistance');
     const tripResultEl = document.getElementById('tripResult');
-    const roundTripToggle = document.getElementById('roundTripToggle'); // NEW
+    const roundTripToggle = document.getElementById('roundTripToggle');
 
-    // Load saved settings
     if(localStorage.getItem('ebike_voltage')) {
         voltageInput.value = localStorage.getItem('ebike_voltage');
     }
@@ -464,25 +462,20 @@
 
     function checkTrip() {
         let tripDistance = parseFloat(tripDistanceInput.value);
-        
         if (isNaN(tripDistance) || tripDistance <= 0) {
             tripResultEl.className = "trip-alert";
             tripResultEl.style.display = "none";
             return;
         }
-
         tripResultEl.style.display = "block";
         
-        // --- NEW ROUND TRIP LOGIC ---
         let actualDistance = tripDistance;
         let tripTypeText = "One-way";
-        
         if (roundTripToggle.checked) {
             actualDistance = tripDistance * 2;
             tripTypeText = "Round trip";
         }
 
-        // Compare actualDistance to the safe minimum range
         if (actualDistance <= currentMaxRange) {
             let remaining = currentMaxRange - actualDistance;
             tripResultEl.className = "trip-alert alert-safe";
@@ -505,17 +498,19 @@
     voltageInput.addEventListener('input', calculateFromVolts);
     loadToggle.addEventListener('change', calculateFromVolts);
     tripDistanceInput.addEventListener('input', checkTrip);
-    roundTripToggle.addEventListener('change', checkTrip); // Listen to the new toggle
+    roundTripToggle.addEventListener('change', checkTrip); 
     calculateFromVolts();
 
-    // --- GPS TRACKER LOGIC ---
+    // --- GPS TRACKER LOGIC WITH PAUSE/RESUME ---
     let watchId = null;
     let totalDistance = 0; 
     let lastPosition = null;
+    let isPaused = false; // NEW: Keeps track of pause state
 
     const gpsDistanceEl = document.getElementById('gpsDistance');
     const gpsSpeedEl = document.getElementById('gpsSpeed');
     const btnStart = document.getElementById('btnStartGps');
+    const btnPause = document.getElementById('btnPauseGps');
     const btnStop = document.getElementById('btnStopGps');
     const btnReset = document.getElementById('btnResetGps');
 
@@ -532,6 +527,9 @@
     }
 
     function onGpsSuccess(position) {
+        // If paused, ignore GPS updates so distance doesn't increase while parked
+        if (isPaused) return; 
+
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
         const speedMps = position.coords.speed;
@@ -564,7 +562,11 @@
             return;
         }
         lastPosition = null; 
+        isPaused = false;
+        
+        // UI changes
         btnStart.style.display = 'none';
+        btnPause.style.display = 'block';
         btnStop.style.display = 'block';
         
         watchId = navigator.geolocation.watchPosition(onGpsSuccess, onGpsError, {
@@ -574,13 +576,36 @@
         });
     }
 
+    function pauseGps() {
+        if (isPaused) {
+            // RESUME
+            isPaused = false;
+            lastPosition = null; // Reset last position so it doesn't draw a huge line across the map after resuming
+            btnPause.innerText = "Pause";
+            btnPause.className = "btn-pause"; // Revert to yellow
+        } else {
+            // PAUSE
+            isPaused = true;
+            gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px;">km/h</span>`;
+            btnPause.innerText = "Resume";
+            btnPause.className = "btn-start"; // Change to green to indicate resume action
+        }
+    }
+
     function stopGps() {
         if (watchId !== null) {
             navigator.geolocation.clearWatch(watchId);
             watchId = null;
         }
+        isPaused = false;
+        
+        // UI changes
         btnStart.style.display = 'block';
+        btnPause.style.display = 'none';
         btnStop.style.display = 'none';
+        btnPause.innerText = "Pause"; // Reset text for next time
+        btnPause.className = "btn-pause";
+        
         gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px;">km/h</span>`;
     }
 
@@ -593,6 +618,7 @@
     }
 
     btnStart.addEventListener('click', startGps);
+    btnPause.addEventListener('click', pauseGps);
     btnStop.addEventListener('click', stopGps);
     btnReset.addEventListener('click', resetGps);
 
