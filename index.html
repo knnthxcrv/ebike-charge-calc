@@ -51,42 +51,22 @@
             transition: background-color 0.3s ease;
         }
 
-        .app-container {
-            max-width: 450px;
-            width: 100%;
-        }
+        .app-container { max-width: 450px; width: 100%; }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-top: 10px;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-top: 10px; }
         .header-text h1 { color: var(--primary); margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
         .header-text p { margin: 3px 0 0 0; font-size: 12px; color: var(--text-muted); }
 
         .theme-toggle {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text-light);
-            width: 45px; height: 45px; border-radius: 50%;
-            font-size: 20px; cursor: pointer;
-            display: flex; justify-content: center; align-items: center;
-            transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-light);
+            width: 45px; height: 45px; border-radius: 50%; font-size: 20px; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
         .theme-toggle:active { transform: scale(0.9); }
 
-        .tabs {
-            display: flex; background: var(--card-bg); border-radius: 12px;
-            padding: 5px; margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 1px solid var(--card-border);
-        }
-        .tab-btn {
-            flex: 1; padding: 12px; text-align: center; background: transparent;
-            color: var(--text-muted); border: none; border-radius: 8px;
-            font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
-        }
+        .tabs { display: flex; background: var(--card-bg); border-radius: 12px; padding: 5px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 1px solid var(--card-border); }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; background: transparent; color: var(--text-muted); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
         .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 2px 8px rgba(251, 197, 49, 0.4); }
 
         .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
@@ -94,21 +74,16 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .card {
-            background-color: var(--card-bg); padding: 20px; border-radius: 16px;
-            margin-bottom: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-            border: 1px solid var(--card-border); transition: background-color 0.3s ease;
+            background-color: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15); border: 1px solid var(--card-border);
+            transition: background-color 0.3s ease;
         }
-        .card-title {
-            font-size: 13px; text-transform: uppercase; color: var(--primary);
-            font-weight: 800; margin-top: 0; margin-bottom: 15px;
-            letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;
-        }
+        .card-title { font-size: 13px; text-transform: uppercase; color: var(--primary); font-weight: 800; margin-top: 0; margin-bottom: 15px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
 
         input[type="number"] {
-            width: 100%; padding: 15px; font-size: 22px; font-weight: 800;
-            text-align: center; border-radius: 12px; border: 2px solid #718093;
-            background-color: var(--input-bg); color: var(--primary);
-            transition: border 0.3s ease; outline: none;
+            width: 100%; padding: 15px; font-size: 22px; font-weight: 800; text-align: center;
+            border-radius: 12px; border: 2px solid #718093; background-color: var(--input-bg);
+            color: var(--primary); transition: border 0.3s ease; outline: none;
         }
         input[type="number"]:focus { border-color: var(--primary); }
 
@@ -157,71 +132,35 @@
         .btn-stop { background-color: var(--danger); color: white; display: none; }
         .btn-reset { background-color: #718093; color: white; }
 
-        /* NEW BATTERY CARE STYLES */
-        .health-bar-container {
-            margin: 15px 0;
-            background: #000;
-            border-radius: 8px;
-            height: 30px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #333;
-        }
-        .health-bar-segment {
-            position: absolute;
-            height: 100%;
-        }
+        /* NEW SMART CHARGING TIMER STYLES */
+        .health-bar-container { margin: 15px 0; background: #000; border-radius: 8px; height: 30px; position: relative; overflow: hidden; border: 1px solid #333; }
+        .health-bar-segment { position: absolute; height: 100%; }
         .health-bar-segment.danger { background: rgba(232, 65, 24, 0.6); width: 30%; left: 0; }
         .health-bar-segment.warning { background: rgba(243, 156, 18, 0.6); width: 10%; left: 30%; }
         .health-bar-segment.perfect { background: rgba(68, 189, 50, 0.6); width: 30%; left: 40%; }
         .health-bar-segment.warning2 { background: rgba(243, 156, 18, 0.6); width: 10%; left: 70%; }
         .health-bar-segment.danger2 { background: rgba(232, 65, 24, 0.6); width: 20%; left: 80%; }
+        .health-bar-indicator { position: absolute; width: 4px; height: 100%; background: white; box-shadow: 0 0 5px white; transition: left 0.4s ease; }
         
-        .health-bar-indicator {
-            position: absolute;
-            width: 4px;
-            height: 100%;
-            background: white;
-            box-shadow: 0 0 5px white;
-            transition: left 0.4s ease;
-        }
-        .health-status-text {
-            text-align: center;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .health-status-text { text-align: center; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
+
+        .start-charge-btn {
+            width: 100%; background: var(--success); color: white; font-size: 16px;
+            padding: 15px; border-radius: 10px; margin-top: 15px; border: none;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
         }
 
-        .rest-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
+        .active-timer-box {
+            display: none; text-align: center; padding: 20px; background: #000;
+            border-radius: 12px; border: 2px solid var(--primary); margin-top: 15px;
+            box-shadow: 0 0 15px rgba(251, 197, 49, 0.2);
         }
-        .rest-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--text-muted);
-            color: var(--text-light);
-            padding: 12px 5px;
-            font-size: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .rest-btn:active { background: #444; }
+        .active-timer-box.active { display: block; animation: fadeIn 0.3s ease; }
         
-        .timer-display {
-            display: none;
-            margin-top: 15px;
-            text-align: center;
-            background: rgba(251, 197, 49, 0.1);
-            border: 1px solid var(--primary);
-            border-radius: 10px;
-            padding: 15px;
-        }
-        .timer-display.active { display: block; animation: fadeIn 0.3s ease; }
-        .timer-text { font-size: 12px; color: var(--primary); text-transform: uppercase; font-weight: 800; margin-bottom: 5px; }
-        .timer-countdown { font-size: 28px; font-weight: 800; color: white; font-family: 'Courier New', Courier, monospace; }
+        .timer-phase { font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--primary); margin-bottom: 5px; letter-spacing: 1px; }
+        .timer-countdown { font-size: 42px; font-weight: 800; color: white; font-family: 'Courier New', Courier, monospace; line-height: 1; }
+        .timer-target { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+        .cancel-timer-btn { background: transparent; color: var(--danger); font-size: 12px; padding: 10px; margin-top: 15px; text-decoration: underline; }
 
         .footer-note { font-size: 11px; color: #718093; text-align: center; margin-top: 20px; line-height: 1.4; }
     </style>
@@ -262,7 +201,7 @@
                     <div class="result-value" id="batteryPercent">100%</div>
                 </div>
                 <div class="result-box">
-                    <div class="result-label">Set Timer</div>
+                    <div class="result-label">Charge Time</div>
                     <div class="result-value highlight" id="timerValue">Ready</div>
                 </div>
                 <div class="result-box" style="grid-column: span 2;">
@@ -280,9 +219,9 @@
             </div>
         </div>
 
-        <!-- NEW BATTERY CARE CARD IMPLEMENTING THE IMAGE RULES -->
+        <!-- SMART CHARGING TIMER CARD -->
         <div class="card">
-            <h3 class="card-title">🩺 Battery Care Rules</h3>
+            <h3 class="card-title">⏱️ Smart Charging Timer</h3>
             
             <div class="health-status-text" id="healthStatusText" style="color: var(--perfect-green);">Perfect time to charge!</div>
             
@@ -295,14 +234,17 @@
                 <div class="health-bar-indicator" id="healthBarIndicator" style="left: 100%;"></div>
             </div>
 
-            <div class="rest-buttons">
-                <button class="rest-btn" id="btnJustDrove">Just Finished Driving (Wait to Charge)</button>
-                <button class="rest-btn" id="btnJustCharged">Just Finished Charging (Wait to Ride)</button>
-            </div>
+            <!-- Button to start the timer -->
+            <button class="start-charge-btn" id="btnStartChargeTimer">
+                ⏱️ Start Charging (Include 30m Rest)
+            </button>
 
-            <div class="timer-display" id="restTimerDisplay">
-                <div class="timer-text" id="restTimerText">Wait to Plug In</div>
-                <div class="timer-countdown" id="restCountdown">30:00</div>
+            <!-- The live countdown display -->
+            <div class="active-timer-box" id="activeTimerBox">
+                <div class="timer-phase" id="timerPhaseText">Charging...</div>
+                <div class="timer-countdown" id="timerCountdownText">00:00:00</div>
+                <div class="timer-target" id="timerTargetText">Ready by 8:00 PM</div>
+                <button class="cancel-timer-btn" id="btnCancelTimer">Cancel Timer</button>
             </div>
         </div>
 
@@ -402,7 +344,6 @@
     const tripResultEl = document.getElementById('tripResult');
     const roundTripToggle = document.getElementById('roundTripToggle');
 
-    // New Battery Health Elements
     const healthBarIndicator = document.getElementById('healthBarIndicator');
     const healthStatusText = document.getElementById('healthStatusText');
 
@@ -434,6 +375,7 @@
     ];
 
     let currentMaxRange = 0;
+    let currentChargeHours = 0; // To store for the timer
 
     function calculateFromVolts() {
         let volts = parseFloat(voltageInput.value);
@@ -464,6 +406,8 @@
                 else if (estPercent > 20) { batteryFill.style.backgroundColor = "var(--warning)"; } 
                 else { batteryFill.style.backgroundColor = "var(--danger)"; }
 
+                currentChargeHours = hoursNum;
+
                 if (hoursNum === 0) { timerValueEl.innerText = "Ready"; } 
                 else { timerValueEl.innerText = hoursNum + " Hrs"; }
 
@@ -482,7 +426,6 @@
                 else if (estPercent === 0) { rangeDistanceEl.innerText = "Charge Now!"; } 
                 else { rangeDistanceEl.innerText = `${minDistance.toFixed(1)} - ${maxDistance.toFixed(1)} km`; }
                 
-                // NEW: Update the Health Bar based on the rules in the image
                 updateHealthBar(estPercent);
                 
                 found = true;
@@ -493,6 +436,7 @@
         if (!found) {
             if (volts > 66.4) {
                 currentMaxRange = isHeavy ? 14 : 20;
+                currentChargeHours = 0;
                 batteryPercentEl.innerText = "100%";
                 timerValueEl.innerText = "Ready";
                 batteryFill.style.width = "100%";
@@ -501,6 +445,7 @@
                 updateHealthBar(100);
             } else if (volts < 50.0) {
                 currentMaxRange = 0;
+                currentChargeHours = 10;
                 batteryPercentEl.innerText = "EMPTY";
                 timerValueEl.innerText = "10+ Hrs";
                 batteryFill.style.width = "0%";
@@ -512,17 +457,13 @@
         checkTrip();
     }
 
-    // NEW FUNCTION: Battery Health Logic
     function updateHealthBar(percent) {
-        // Move the white indicator line
         healthBarIndicator.style.left = percent + '%';
-
-        // Update the text based on the manual rules
         if (percent >= 40 && percent <= 70) {
             healthStatusText.innerText = "✅ PERFECT time to charge (40%-70%)";
             healthStatusText.style.color = "var(--perfect-green)";
         } else if (percent > 70 && percent < 80) {
-            healthStatusText.innerText = "⚠️ Above 70%. Wait until it drops to 70%.";
+            healthStatusText.innerText = "⚠️ Above 70%. Wait until it drops.";
             healthStatusText.style.color = "var(--warning)";
         } else if (percent >= 80) {
             healthStatusText.innerText = "🛑 Do NOT charge (Over 70%)";
@@ -570,58 +511,117 @@
     roundTripToggle.addEventListener('change', checkTrip); 
     calculateFromVolts();
 
-    // --- NEW: REST TIMER LOGIC ---
-    let countdownInterval = null;
-    const restTimerDisplay = document.getElementById('restTimerDisplay');
-    const restTimerText = document.getElementById('restTimerText');
-    const restCountdown = document.getElementById('restCountdown');
-    const btnJustDrove = document.getElementById('btnJustDrove');
-    const btnJustCharged = document.getElementById('btnJustCharged');
+    // --- NEW SMART CHARGING TIMER LOGIC ---
+    const btnStartChargeTimer = document.getElementById('btnStartChargeTimer');
+    const activeTimerBox = document.getElementById('activeTimerBox');
+    const timerPhaseText = document.getElementById('timerPhaseText');
+    const timerCountdownText = document.getElementById('timerCountdownText');
+    const timerTargetText = document.getElementById('timerTargetText');
+    const btnCancelTimer = document.getElementById('btnCancelTimer');
 
-    function startRestTimer(type) {
-        // Clear any existing timer
-        if (countdownInterval) clearInterval(countdownInterval);
+    let timerInterval = null;
 
-        // 30 minutes in seconds
-        let timeLeft = 30 * 60; 
-        
-        restTimerDisplay.classList.add('active');
-        
-        if (type === 'drove') {
-            restTimerText.innerText = "Wait to Plug In (Cool Down)";
-        } else {
-            restTimerText.innerText = "Wait to Ride (Battery Rest)";
+    function startChargingTimer() {
+        if (currentChargeHours === 0) {
+            alert("Battery is already full! No need to charge.");
+            return;
         }
 
-        function updateTimer() {
-            let minutes = Math.floor(timeLeft / 60);
-            let seconds = timeLeft % 60;
-            
-            // Format with leading zeros
-            restCountdown.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        // Total time = Charging Time + 30 minutes (0.5 hours)
+        let totalMinutes = (currentChargeHours * 60) + 30;
+        
+        // Save the "End Time" to memory (Current time + total minutes)
+        const endTime = new Date(Date.now() + totalMinutes * 60000);
+        localStorage.setItem('ebike_timer_end', endTime.getTime());
+        localStorage.setItem('ebike_timer_total', totalMinutes);
 
-            if (timeLeft <= 0) {
-                clearInterval(countdownInterval);
-                restCountdown.innerText = "DONE!";
-                restCountdown.style.color = "var(--success)";
-            } else {
-                timeLeft--;
-            }
-        }
-
-        updateTimer(); // Run immediately
-        countdownInterval = setInterval(updateTimer, 1000);
+        runTimer();
     }
 
-    btnJustDrove.addEventListener('click', () => {
-        restCountdown.style.color = "white"; // Reset color
-        startRestTimer('drove');
+    function runTimer() {
+        clearInterval(timerInterval);
+        
+        const savedEndTime = parseInt(localStorage.getItem('ebike_timer_end'));
+        const totalMinutes = parseInt(localStorage.getItem('ebike_timer_total'));
+
+        if (!savedEndTime) return; // No timer running
+
+        activeTimerBox.classList.add('active');
+        btnStartChargeTimer.style.display = 'none';
+
+        // Calculate and display the target clock time
+        const targetTimeStr = new Date(savedEndTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        timerTargetText.innerText = `Ready to ride by: ${targetTimeStr}`;
+
+        timerInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = savedEndTime - now;
+
+            if (distance <= 0) {
+                // TIMER FINISHED
+                clearInterval(timerInterval);
+                timerPhaseText.innerText = "✅ READY TO RIDE!";
+                timerPhaseText.style.color = "var(--success)";
+                timerCountdownText.innerText = "00:00:00";
+                localStorage.removeItem('ebike_timer_end');
+                
+                // Play a beep if possible
+                try { new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play(); } catch(e) {}
+                
+                setTimeout(() => {
+                    activeTimerBox.classList.remove('active');
+                    btnStartChargeTimer.style.display = 'flex';
+                }, 10000); // Hide after 10 seconds
+                return;
+            }
+
+            // Time calculations
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Update the big countdown
+            timerCountdownText.innerText = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Check if we are in the "Rest" phase (last 30 mins)
+            const totalMsLeft = distance;
+            const restMs = 30 * 60 * 1000;
+
+            if (totalMsLeft <= restMs) {
+                // Rest phase
+                timerPhaseText.innerText = "⚡ Charging Complete. Resting...";
+                timerPhaseText.style.color = "var(--success)";
+                timerCountdownText.style.color = "var(--success)";
+            } else {
+                // Charging phase
+                timerPhaseText.innerText = "🔌 Charging & Timer Set...";
+                timerPhaseText.style.color = "var(--primary)";
+                timerCountdownText.style.color = "white";
+            }
+
+        }, 1000);
+    }
+
+    btnStartChargeTimer.addEventListener('click', startChargingTimer);
+
+    btnCancelTimer.addEventListener('click', () => {
+        if(confirm("Cancel the active timer?")) {
+            clearInterval(timerInterval);
+            localStorage.removeItem('ebike_timer_end');
+            localStorage.removeItem('ebike_timer_total');
+            activeTimerBox.classList.remove('active');
+            btnStartChargeTimer.style.display = 'flex';
+            timerPhaseText.innerText = "Charging...";
+            timerCountdownText.innerText = "00:00:00";
+            timerCountdownText.style.color = "white";
+        }
     });
 
-    btnJustCharged.addEventListener('click', () => {
-        restCountdown.style.color = "white"; // Reset color
-        startRestTimer('charged');
-    });
+    // On page load, check if a timer was already running
+    if (localStorage.getItem('ebike_timer_end')) {
+        runTimer();
+    }
 
     // --- GPS TRACKER & ODOMETER LOGIC ---
     let watchId = null;
