@@ -173,6 +173,15 @@
             padding: 10px;
             font-size: 18px;
         }
+        /* New styles for Round Trip toggle inside Trip Planner */
+        .trip-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
         .trip-alert {
             padding: 10px;
             border-radius: 5px;
@@ -184,7 +193,6 @@
         .alert-safe { background-color: var(--success); color: white; display: block; }
         .alert-danger { background-color: var(--danger); color: white; display: block; }
 
-        /* GPS RECORDER CSS */
         .gps-tracker {
             background-color: #2c3e50;
             padding: 15px;
@@ -282,11 +290,20 @@
 
     <div class="trip-planner">
         <h3>🗺️ Trip Planner</h3>
-        <input type="number" id="tripDistance" placeholder="Enter trip distance (km)" step="0.5">
+        
+        <!-- NEW ROUND TRIP TOGGLE -->
+        <div class="trip-toggle">
+            <span>Round Trip? (Double Distance)</span>
+            <label class="switch">
+                <input type="checkbox" id="roundTripToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <input type="number" id="tripDistance" placeholder="Enter one-way distance (km)" step="0.5">
         <div id="tripResult" class="trip-alert"></div>
     </div>
 
-    <!-- NEW GPS RECORDER SECTION -->
     <div class="gps-tracker">
         <h3>📍 GPS Trip Recorder</h3>
         
@@ -323,9 +340,12 @@
     const rangeDistanceEl = document.getElementById('rangeDistance');
     const batteryFill = document.getElementById('batteryFill');
     
+    // Trip Planner Elements
     const tripDistanceInput = document.getElementById('tripDistance');
     const tripResultEl = document.getElementById('tripResult');
+    const roundTripToggle = document.getElementById('roundTripToggle'); // NEW
 
+    // Load saved settings
     if(localStorage.getItem('ebike_voltage')) {
         voltageInput.value = localStorage.getItem('ebike_voltage');
     }
@@ -444,19 +464,32 @@
 
     function checkTrip() {
         let tripDistance = parseFloat(tripDistanceInput.value);
+        
         if (isNaN(tripDistance) || tripDistance <= 0) {
             tripResultEl.className = "trip-alert";
             tripResultEl.style.display = "none";
             return;
         }
+
         tripResultEl.style.display = "block";
-        if (tripDistance <= currentMaxRange) {
-            let remaining = currentMaxRange - tripDistance;
+        
+        // --- NEW ROUND TRIP LOGIC ---
+        let actualDistance = tripDistance;
+        let tripTypeText = "One-way";
+        
+        if (roundTripToggle.checked) {
+            actualDistance = tripDistance * 2;
+            tripTypeText = "Round trip";
+        }
+
+        // Compare actualDistance to the safe minimum range
+        if (actualDistance <= currentMaxRange) {
+            let remaining = currentMaxRange - actualDistance;
             tripResultEl.className = "trip-alert alert-safe";
-            tripResultEl.innerText = `✅ Safe! You will have ~${remaining.toFixed(1)} km left.`;
+            tripResultEl.innerText = `✅ Safe ${tripTypeText} (${actualDistance} km)! You'll have ~${remaining.toFixed(1)} km left.`;
         } else {
             tripResultEl.className = "trip-alert alert-danger";
-            tripResultEl.innerText = `⚠️ WARNING: Too far! Charge first or you might get stranded.`;
+            tripResultEl.innerText = `⚠️ WARNING: Too far for a ${tripTypeText.toLowerCase()} (${actualDistance} km)! Charge first.`;
         }
     }
 
@@ -472,13 +505,13 @@
     voltageInput.addEventListener('input', calculateFromVolts);
     loadToggle.addEventListener('change', calculateFromVolts);
     tripDistanceInput.addEventListener('input', checkTrip);
+    roundTripToggle.addEventListener('change', checkTrip); // Listen to the new toggle
     calculateFromVolts();
 
     // --- GPS TRACKER LOGIC ---
     let watchId = null;
-    let totalDistance = 0; // in kilometers
+    let totalDistance = 0; 
     let lastPosition = null;
-    let isTracking = false;
 
     const gpsDistanceEl = document.getElementById('gpsDistance');
     const gpsSpeedEl = document.getElementById('gpsSpeed');
@@ -486,9 +519,8 @@
     const btnStop = document.getElementById('btnStopGps');
     const btnReset = document.getElementById('btnResetGps');
 
-    // Haversine formula to calculate distance between two coordinates in km
     function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371; // Earth's radius in km
+        const R = 6371; 
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
         const a = 
@@ -502,9 +534,8 @@
     function onGpsSuccess(position) {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        const speedMps = position.coords.speed; // Meters per second
+        const speedMps = position.coords.speed;
 
-        // Update Speed (handle null speed if GPS is struggling)
         if (speedMps !== null && speedMps >= 0) {
             const speedKmh = speedMps * 3.6;
             gpsSpeedEl.innerHTML = `${speedKmh.toFixed(1)} <span style="font-size:12px;">km/h</span>`;
@@ -512,11 +543,8 @@
             gpsSpeedEl.innerHTML = `-- <span style="font-size:12px;">km/h</span>`;
         }
 
-        // Update Distance
         if (lastPosition) {
             const dist = calculateHaversineDistance(lastPosition.lat, lastPosition.lon, lat, lon);
-            
-            // Filter out tiny jumps (less than 2 meters) to prevent drift when standing still
             if (dist > 0.002) { 
                 totalDistance += dist;
                 gpsDistanceEl.innerHTML = `${totalDistance.toFixed(2)} <span style="font-size:12px;">km</span>`;
@@ -526,7 +554,7 @@
     }
 
     function onGpsError(error) {
-        alert(`GPS Error: ${error.message}\nPlease ensure Location is turned on and you allowed permissions.`);
+        alert(`GPS Error: ${error.message}\nPlease ensure Location is turned on.`);
         stopGps();
     }
 
@@ -535,14 +563,10 @@
             alert("GPS is not supported by your browser.");
             return;
         }
-        
-        isTracking = true;
-        lastPosition = null; // Reset last position so it starts fresh
+        lastPosition = null; 
         btnStart.style.display = 'none';
         btnStop.style.display = 'block';
-        btnStart.style.backgroundColor = "gray"; // visual feedback
         
-        // Watch position with high accuracy
         watchId = navigator.geolocation.watchPosition(onGpsSuccess, onGpsError, {
             enableHighAccuracy: true,
             maximumAge: 0,
@@ -551,15 +575,13 @@
     }
 
     function stopGps() {
-        isTracking = false;
         if (watchId !== null) {
             navigator.geolocation.clearWatch(watchId);
             watchId = null;
         }
         btnStart.style.display = 'block';
         btnStop.style.display = 'none';
-        btnStart.style.backgroundColor = "var(--success)";
-        gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px;">km/h</span>`; // Reset speed display
+        gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px;">km/h</span>`;
     }
 
     function resetGps() {
