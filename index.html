@@ -15,6 +15,8 @@
         :root {
             --bg-color: #1e272e;
             --card-bg: #2f3640;
+            --card-border: rgba(255,255,255,0.05);
+            --input-bg: #1e272e;
             --primary: #fbc531;
             --text-light: #f5f6fa;
             --text-muted: #dcdde1;
@@ -22,6 +24,15 @@
             --danger: #e84118;
             --warning: #f39c12;
             --gps-blue: #00a8ff;
+        }
+
+        /* OLED THEME OVERRIDES */
+        body.oled-theme {
+            --bg-color: #000000;
+            --card-bg: #0a0a0a;
+            --card-border: #222222;
+            --input-bg: #000000;
+            --text-muted: #888888;
         }
 
         * { box-sizing: border-box; }
@@ -37,6 +48,7 @@
             align-items: flex-start;
             min-height: 100vh;
             touch-action: manipulation;
+            transition: background-color 0.3s ease;
         }
 
         .app-container {
@@ -46,22 +58,42 @@
 
         /* Header */
         .header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
             padding-top: 10px;
         }
-        .header h1 {
+        .header-text h1 {
             color: var(--primary);
             margin: 0;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             letter-spacing: -0.5px;
         }
-        .header p {
-            margin: 5px 0 0 0;
-            font-size: 13px;
+        .header-text p {
+            margin: 3px 0 0 0;
+            font-size: 12px;
             color: var(--text-muted);
         }
+
+        /* THEME TOGGLE BUTTON */
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-light);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .theme-toggle:active { transform: scale(0.9); }
 
         /* TABS NAVIGATION */
         .tabs {
@@ -71,6 +103,8 @@
             padding: 5px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: 1px solid var(--card-border);
+            transition: background-color 0.3s ease;
         }
         .tab-btn {
             flex: 1;
@@ -80,14 +114,14 @@
             color: var(--text-muted);
             border: none;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         .tab-btn.active {
             background: var(--primary);
-            color: #1e272e;
+            color: #000;
             box-shadow: 0 2px 8px rgba(251, 197, 49, 0.4);
         }
 
@@ -111,10 +145,11 @@
             border-radius: 16px;
             margin-bottom: 15px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .card-title {
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             color: var(--primary);
             font-weight: 800;
@@ -135,9 +170,9 @@
             text-align: center;
             border-radius: 12px;
             border: 2px solid #718093;
-            background-color: #1e272e;
+            background-color: var(--input-bg);
             color: var(--primary);
-            transition: border 0.3s ease;
+            transition: border 0.3s ease, background-color 0.3s ease;
             outline: none;
         }
         input[type="number"]:focus {
@@ -157,6 +192,8 @@
             border-radius: 10px;
             text-align: center;
         }
+        body.oled-theme .result-box { background: #111; }
+        
         .result-label {
             font-size: 11px;
             color: var(--text-muted);
@@ -169,12 +206,8 @@
             font-weight: 800;
             color: var(--text-light);
         }
-        .result-value.highlight {
-            color: var(--success);
-        }
-        .result-value.warning {
-            color: var(--warning);
-        }
+        .result-value.highlight { color: var(--success); }
+        .result-value.warning { color: var(--warning); }
 
         .battery-container {
             display: flex;
@@ -218,6 +251,8 @@
             padding: 10px 15px;
             border-radius: 10px;
         }
+        body.oled-theme .toggle-row { background: #111; }
+        
         .toggle-row span {
             font-size: 13px;
             font-weight: 600;
@@ -249,7 +284,7 @@
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border: 2px solid #353b48;
+            border: 2px solid var(--card-border);
             box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
             margin-bottom: 15px;
         }
@@ -280,6 +315,8 @@
             border-radius: 12px;
             text-align: center;
         }
+        body.oled-theme .gps-stat-box { background: #111; }
+
         .gps-stat-label {
             font-size: 11px;
             color: var(--text-muted);
@@ -299,9 +336,6 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
-        .btn-group.three-cols {
-            grid-template-columns: 1fr 1fr 1fr;
-        }
         button {
             padding: 15px;
             font-size: 15px;
@@ -315,7 +349,7 @@
         }
         button:active { transform: scale(0.96); }
         .btn-start { background-color: var(--success); color: white; }
-        .btn-pause { background-color: var(--primary); color: #1e272e; display: none; }
+        .btn-pause { background-color: var(--primary); color: #000; display: none; }
         .btn-stop { background-color: var(--danger); color: white; display: none; }
         .btn-reset { background-color: #718093; color: white; }
 
@@ -332,8 +366,12 @@
 
 <div class="app-container">
     <div class="header">
-        <h1>Periwinkle Dashboard</h1>
-        <p>60V 20Ah E-Trike Tracker</p>
+        <div class="header-text">
+            <h1>Periwinkle</h1>
+            <p>60V 20Ah E-Trike</p>
+        </div>
+        <!-- THEME TOGGLE BUTTON -->
+        <button class="theme-toggle" id="themeToggle" title="Toggle OLED Mode">🌙</button>
     </div>
 
     <!-- TAB NAVIGATION -->
@@ -434,20 +472,40 @@
 </div>
 
 <script>
+    // --- THEME TOGGLE LOGIC ---
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Check memory for saved theme
+    if (localStorage.getItem('ebike_theme') === 'oled') {
+        body.classList.add('oled-theme');
+        themeToggleBtn.innerText = '☀️';
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+        body.classList.toggle('oled-theme');
+        
+        if (body.classList.contains('oled-theme')) {
+            themeToggleBtn.innerText = '☀️';
+            localStorage.setItem('ebike_theme', 'oled');
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
+        } else {
+            themeToggleBtn.innerText = '🌙';
+            localStorage.setItem('ebike_theme', 'slate');
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1e272e');
+        }
+    });
+
     // --- TAB SWITCHING LOGIC ---
     function switchTab(tabId) {
-        // Hide all tabs
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.remove('active');
         });
-        // Remove active state from all buttons
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.classList.remove('active');
         });
-        
-        // Show selected tab
         document.getElementById(tabId).classList.add('active');
-        // Set clicked button to active
         event.target.classList.add('active');
     }
 
@@ -699,7 +757,6 @@
         btnPause.style.display = 'block';
         btnStop.style.display = 'block';
         
-        // Adjust button grid spans when tracking starts
         btnPause.style.gridColumn = "span 1";
         btnStop.style.gridColumn = "span 1";
         
@@ -738,7 +795,6 @@
         btnPause.innerText = "⏸ Pause"; 
         btnPause.className = "btn-pause";
         
-        // Reset button grid spans
         btnStart.style.gridColumn = "span 2";
         
         gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px; color:var(--text-muted);">km/h</span>`;
