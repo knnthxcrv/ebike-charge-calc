@@ -2,14 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wayne's E-Bike Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Periwinkle E-Bike Calculator</title>
+    
+    <!-- PWA & Mobile App Meta Tags -->
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <style>
         :root {
             --primary: #f1c40f;
             --dark: #2c3e50;
             --light: #ecf0f1;
             --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #e67e22;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -21,6 +29,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            touch-action: manipulation;
         }
         .container {
             background-color: #34495e;
@@ -42,7 +51,7 @@
             text-align: center;
             font-size: 14px;
             color: #bdc3c7;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         label {
             font-weight: bold;
@@ -59,7 +68,7 @@
             border-radius: 10px;
             border: 2px solid #bdc3c7;
             box-sizing: border-box;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background-color: var(--light);
             color: var(--dark);
         }
@@ -67,6 +76,59 @@
             outline: none;
             border-color: var(--primary);
         }
+        
+        /* Battery Icon CSS */
+        .battery-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .battery-body {
+            width: 120px;
+            height: 50px;
+            border: 4px solid white;
+            border-radius: 8px;
+            padding: 3px;
+            position: relative;
+        }
+        .battery-body::after {
+            content: '';
+            position: absolute;
+            right: -12px;
+            top: 12px;
+            width: 8px;
+            height: 20px;
+            background: white;
+            border-radius: 0 4px 4px 0;
+        }
+        .battery-fill {
+            height: 100%;
+            background-color: var(--success);
+            border-radius: 4px;
+            width: 100%;
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #2c3e50;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #7f8c8d;
+        }
+        .toggle-label { font-size: 14px; font-weight: bold; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #7f8c8d; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
         .results {
             background-color: var(--light);
             color: var(--dark);
@@ -83,23 +145,14 @@
             border-bottom: 1px solid #bdc3c7;
             padding-bottom: 10px;
         }
-        .result-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-        .result-label {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .result-data {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--danger);
-            text-align: right;
-        }
+        .result-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .result-label { font-weight: 600; font-size: 14px; }
+        .result-data { font-size: 18px; font-weight: bold; color: var(--danger); text-align: right; }
+        .result-data.small { font-size: 14px; color: var(--dark); font-weight: normal; }
+        
         .note {
             font-size: 11px;
-            color: #7f8c8d;
+            color: #bdc3c7;
             text-align: center;
             margin-top: 20px;
             line-height: 1.4;
@@ -110,14 +163,28 @@
 
 <div class="container">
     <h1>E-Bike Calculator</h1>
-    <div class="subtitle">Periwinkle 60V 20Ah Model</div>
+    <div class="subtitle">Periwinkle 60V 20Ah</div>
 
     <label for="voltageInput">Type Remaining Volts:</label>
     <input type="number" id="voltageInput" step="0.1" min="50.0" max="70.0" value="66.7" placeholder="e.g., 62.4">
 
+    <div class="battery-container">
+        <div class="battery-body">
+            <div class="battery-fill" id="batteryFill"></div>
+        </div>
+    </div>
+
+    <div class="toggle-container">
+        <span class="toggle-label">Heavy Load / Cargo?</span>
+        <label class="switch">
+            <input type="checkbox" id="loadToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
     <div class="results">
         <div class="result-item">
-            <span class="result-label">Approx. Battery %:</span>
+            <span class="result-label">Battery %:</span>
             <span class="result-data" id="batteryPercent">100%</span>
         </div>
         <div class="result-item">
@@ -125,51 +192,70 @@
             <span class="result-data" id="chargeTime">Full</span>
         </div>
         <div class="result-item">
+            <span class="result-label">Ready to Unplug At:</span>
+            <span class="result-data" id="readyTime">--:--</span>
+        </div>
+        <div class="result-item" style="flex-direction: column; align-items: flex-start; gap: 5px;">
             <span class="result-label">Est. Remaining Range:</span>
             <span class="result-data" id="rangeDistance">20 - 30 km</span>
         </div>
     </div>
 
     <div class="note">
-        * Voltage and charge times are mapped directly from the 60V chart.<br>
-        * Range is estimated using the 20-30km max range from the flyer.
+        * Charge times mapped to Wayne's 60V chart.<br>
+        * Range estimates based on 20-30km max.
     </div>
 </div>
 
 <script>
     const voltageInput = document.getElementById('voltageInput');
+    const loadToggle = document.getElementById('loadToggle');
     const batteryPercentEl = document.getElementById('batteryPercent');
     const chargeTimeEl = document.getElementById('chargeTime');
+    const readyTimeEl = document.getElementById('readyTime');
     const rangeDistanceEl = document.getElementById('rangeDistance');
+    const batteryFill = document.getElementById('batteryFill');
 
-    // EXACT DATA FROM THE 60V CHART
-    // Format: [Max Volts, Min Volts, Percent String, Charge Hours, Est Percent Number]
+    // Memory: Load saved values on startup
+    if(localStorage.getItem('ebike_voltage')) {
+        voltageInput.value = localStorage.getItem('ebike_voltage');
+    }
+    if(localStorage.getItem('ebike_load') === 'true') {
+        loadToggle.checked = true;
+    }
+
+    // Exact 60V Data from the chart
     const voltData = [
-        [70.00, 66.7, "100%", "Full", 100],
-        [66.6, 66.0, "95%", "3.5 hrs", 95],
-        [65.9, 65.3, "90%", "4 hrs", 90],
-        [65.2, 64.6, "85%", "4 hrs", 85],
-        [64.5, 63.9, "80%", "4.5 hrs", 80],
-        [63.8, 63.1, "75%", "4.5 hrs", 75],
-        [63.0, 62.4, "70%", "5 hrs", 70],
-        [62.3, 61.7, "65%", "5.5 hrs", 65],
-        [61.6, 61.0, "60%", "5.5 hrs", 60],
-        [60.9, 60.3, "55%", "6 hrs", 55],
-        [60.2, 59.6, "50%", "6.5 hrs", 50],
-        [59.5, 58.9, "45%", "6.5 hrs", 45],
-        [58.8, 58.2, "40%", "7 hrs", 40],
-        [58.1, 57.4, "35%", "7.5 hrs", 35],
-        [57.3, 56.7, "30%", "7.5 hrs", 30],
-        [56.6, 56.0, "25%", "8 hrs", 25],
-        [55.9, 55.3, "20%", "8.5 hrs", 20],
-        [55.2, 54.6, "15%", "9 hrs", 15],
-        [54.5, 53.9, "10%", "9.5 hrs", 10],
-        [53.8, 53.2, "5%", "10 hrs", 5],
-        [53.1, 52.5, "0%", "10 hrs", 0]
+        [70.00, 66.7, "100%", "Full", 100, 0],
+        [66.6, 66.0, "95%", "3.5 hrs", 95, 3.5],
+        [65.9, 65.3, "90%", "4 hrs", 90, 4.0],
+        [65.2, 64.6, "85%", "4 hrs", 85, 4.0],
+        [64.5, 63.9, "80%", "4.5 hrs", 80, 4.5],
+        [63.8, 63.1, "75%", "4.5 hrs", 75, 4.5],
+        [63.0, 62.4, "70%", "5 hrs", 70, 5.0],
+        [62.3, 61.7, "65%", "5.5 hrs", 65, 5.5],
+        [61.6, 61.0, "60%", "5.5 hrs", 60, 5.5],
+        [60.9, 60.3, "55%", "6 hrs", 55, 6.0],
+        [60.2, 59.6, "50%", "6.5 hrs", 50, 6.5],
+        [59.5, 58.9, "45%", "6.5 hrs", 45, 6.5],
+        [58.8, 58.2, "40%", "7 hrs", 40, 7.0],
+        [58.1, 57.4, "35%", "7.5 hrs", 35, 7.5],
+        [57.3, 56.7, "30%", "7.5 hrs", 30, 7.5],
+        [56.6, 56.0, "25%", "8 hrs", 25, 8.0],
+        [55.9, 55.3, "20%", "8.5 hrs", 20, 8.5],
+        [55.2, 54.6, "15%", "9 hrs", 15, 9.0],
+        [54.5, 53.9, "10%", "9.5 hrs", 10, 9.5],
+        [53.8, 53.2, "5%", "10 hrs", 5, 10.0],
+        [53.1, 52.5, "0%", "10 hrs", 0, 10.0]
     ];
 
     function calculateFromVolts() {
         let volts = parseFloat(voltageInput.value);
+        let isHeavy = loadToggle.checked;
+
+        // Save to memory
+        localStorage.setItem('ebike_voltage', voltageInput.value);
+        localStorage.setItem('ebike_load', isHeavy);
 
         if (isNaN(volts)) {
             resetDisplay();
@@ -184,18 +270,49 @@
             let percentStr = row[2];
             let chargeTime = row[3];
             let estPercent = row[4];
+            let hoursNum = row[5];
 
-            // Check if the input voltage is within this row's range
             if (volts <= maxV && volts >= minV) {
+                // 1. Update Text
                 batteryPercentEl.innerText = percentStr;
                 chargeTimeEl.innerText = chargeTime;
                 
-                // Calculate distance (Max 30km, Min 20km)
-                let minDistance = (estPercent / 100) * 20;
-                let maxDistance = (estPercent / 100) * 30;
+                // 2. Update Visual Battery
+                batteryFill.style.width = estPercent + '%';
+                if (estPercent > 50) {
+                    batteryFill.style.backgroundColor = "var(--success)"; // Green
+                } else if (estPercent > 20) {
+                    batteryFill.style.backgroundColor = "var(--warning)"; // Orange
+                } else {
+                    batteryFill.style.backgroundColor = "var(--danger)"; // Red
+                }
+
+                // 3. Calculate Ready By Time
+                if (hoursNum === 0) {
+                    readyTimeEl.innerText = "Ready Now";
+                } else {
+                    let now = new Date();
+                    now.setHours(now.getHours() + Math.floor(hoursNum));
+                    now.setMinutes(now.getMinutes() + ((hoursNum % 1) * 60));
+                    
+                    let timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    readyTimeEl.innerText = timeString;
+                }
+
+                // 4. Calculate Distance (Based on load toggle)
+                let minDistance, maxDistance;
+                if (isHeavy) {
+                    // Heavy load cuts range by ~30%
+                    minDistance = (estPercent / 100) * 14; 
+                    maxDistance = (estPercent / 100) * 21;
+                } else {
+                    // Normal load
+                    minDistance = (estPercent / 100) * 20;
+                    maxDistance = (estPercent / 100) * 30;
+                }
                 
                 if (estPercent === 100) {
-                    rangeDistanceEl.innerText = "20 - 30 km";
+                    rangeDistanceEl.innerText = isHeavy ? "14 - 21 km" : "20 - 30 km";
                 } else if (estPercent === 0) {
                      rangeDistanceEl.innerText = "Charge Now!";
                 } else {
@@ -207,15 +324,20 @@
             }
         }
 
-        // Fallbacks for numbers outside the chart
         if (!found) {
             if (volts > 66.7) {
                 batteryPercentEl.innerText = "100% (Surface)";
                 chargeTimeEl.innerText = "Unplugged";
-                rangeDistanceEl.innerText = "20 - 30 km";
+                readyTimeEl.innerText = "Ready Now";
+                batteryFill.style.width = "100%";
+                batteryFill.style.backgroundColor = "var(--success)";
+                rangeDistanceEl.innerText = isHeavy ? "14 - 21 km" : "20 - 30 km";
             } else if (volts < 52.5) {
                 batteryPercentEl.innerText = "EMPTY";
                 chargeTimeEl.innerText = "10+ hrs";
+                readyTimeEl.innerText = "--:--";
+                batteryFill.style.width = "0%";
+                batteryFill.style.backgroundColor = "var(--danger)";
                 rangeDistanceEl.innerText = "0 km";
             }
         }
@@ -224,10 +346,15 @@
     function resetDisplay() {
         batteryPercentEl.innerText = "--";
         chargeTimeEl.innerText = "--";
+        readyTimeEl.innerText = "--";
         rangeDistanceEl.innerText = "--";
+        batteryFill.style.width = "0%";
     }
 
     voltageInput.addEventListener('input', calculateFromVolts);
+    loadToggle.addEventListener('change', calculateFromVolts);
+
+    // Run once on page load
     calculateFromVolts();
 </script>
 
