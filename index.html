@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Periwinkle E-Bike Calculator</title>
     
-    <!-- PWA & Mobile App Meta Tags -->
     <meta name="theme-color" content="#2c3e50">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -77,7 +76,6 @@
             border-color: var(--primary);
         }
         
-        /* Battery Icon CSS */
         .battery-container {
             display: flex;
             align-items: center;
@@ -110,7 +108,6 @@
             transition: width 0.4s ease, background-color 0.4s ease;
         }
 
-        /* Toggle Switch */
         .toggle-container {
             display: flex;
             align-items: center;
@@ -148,14 +145,14 @@
         .result-item:last-child { border-bottom: none; padding-bottom: 0; }
         .result-label { font-weight: 600; font-size: 14px; }
         .result-data { font-size: 18px; font-weight: bold; color: var(--danger); text-align: right; }
-        .result-data.small { font-size: 14px; color: var(--dark); font-weight: normal; }
         
         .note {
-            font-size: 11px;
-            color: #bdc3c7;
+            font-size: 12px;
+            color: #f1c40f;
             text-align: center;
             margin-top: 20px;
             line-height: 1.4;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -166,7 +163,7 @@
     <div class="subtitle">Periwinkle 60V 20Ah</div>
 
     <label for="voltageInput">Type Remaining Volts:</label>
-    <input type="number" id="voltageInput" step="0.1" min="50.0" max="70.0" value="66.7" placeholder="e.g., 62.4">
+    <input type="number" id="voltageInput" step="0.1" min="50.0" max="70.0" value="66.5" placeholder="e.g., 62.4">
 
     <div class="battery-container">
         <div class="battery-body">
@@ -192,8 +189,8 @@
             <span class="result-data" id="chargeTime">Full</span>
         </div>
         <div class="result-item">
-            <span class="result-label">Ready to Unplug At:</span>
-            <span class="result-data" id="readyTime">--:--</span>
+            <span class="result-label">Set Plug Timer To:</span>
+            <span class="result-data" id="readyTime" style="color: var(--success); font-size: 20px;">--:--</span>
         </div>
         <div class="result-item" style="flex-direction: column; align-items: flex-start; gap: 5px;">
             <span class="result-label">Est. Remaining Range:</span>
@@ -202,8 +199,7 @@
     </div>
 
     <div class="note">
-        * Charge times mapped to Wayne's 60V chart.<br>
-        * Range estimates based on 20-30km max.
+        * Smart move using a plug timer! Since lithium batteries rarely hit exactly 66.7V, trust the timer and your charger's green light.
     </div>
 </div>
 
@@ -216,7 +212,6 @@
     const rangeDistanceEl = document.getElementById('rangeDistance');
     const batteryFill = document.getElementById('batteryFill');
 
-    // Memory: Load saved values on startup
     if(localStorage.getItem('ebike_voltage')) {
         voltageInput.value = localStorage.getItem('ebike_voltage');
     }
@@ -224,10 +219,9 @@
         loadToggle.checked = true;
     }
 
-    // Exact 60V Data from the chart
     const voltData = [
-        [70.00, 66.7, "100%", "Full", 100, 0],
-        [66.6, 66.0, "95%", "3.5 hrs", 95, 3.5],
+        [70.00, 66.4, "100%", "Full", 100, 0], 
+        [66.3, 66.0, "95%", "3.5 hrs", 95, 3.5],
         [65.9, 65.3, "90%", "4 hrs", 90, 4.0],
         [65.2, 64.6, "85%", "4 hrs", 85, 4.0],
         [64.5, 63.9, "80%", "4.5 hrs", 80, 4.5],
@@ -246,14 +240,13 @@
         [55.2, 54.6, "15%", "9 hrs", 15, 9.0],
         [54.5, 53.9, "10%", "9.5 hrs", 10, 9.5],
         [53.8, 53.2, "5%", "10 hrs", 5, 10.0],
-        [53.1, 52.5, "0%", "10 hrs", 0, 10.0]
+        [53.1, 50.0, "0%", "10 hrs", 0, 10.0] 
     ];
 
     function calculateFromVolts() {
         let volts = parseFloat(voltageInput.value);
         let isHeavy = loadToggle.checked;
 
-        // Save to memory
         localStorage.setItem('ebike_voltage', voltageInput.value);
         localStorage.setItem('ebike_load', isHeavy);
 
@@ -273,23 +266,20 @@
             let hoursNum = row[5];
 
             if (volts <= maxV && volts >= minV) {
-                // 1. Update Text
                 batteryPercentEl.innerText = percentStr;
                 chargeTimeEl.innerText = chargeTime;
                 
-                // 2. Update Visual Battery
                 batteryFill.style.width = estPercent + '%';
                 if (estPercent > 50) {
-                    batteryFill.style.backgroundColor = "var(--success)"; // Green
+                    batteryFill.style.backgroundColor = "var(--success)";
                 } else if (estPercent > 20) {
-                    batteryFill.style.backgroundColor = "var(--warning)"; // Orange
+                    batteryFill.style.backgroundColor = "var(--warning)";
                 } else {
-                    batteryFill.style.backgroundColor = "var(--danger)"; // Red
+                    batteryFill.style.backgroundColor = "var(--danger)";
                 }
 
-                // 3. Calculate Ready By Time
                 if (hoursNum === 0) {
-                    readyTimeEl.innerText = "Ready Now";
+                    readyTimeEl.innerText = "Fully Charged";
                 } else {
                     let now = new Date();
                     now.setHours(now.getHours() + Math.floor(hoursNum));
@@ -299,14 +289,11 @@
                     readyTimeEl.innerText = timeString;
                 }
 
-                // 4. Calculate Distance (Based on load toggle)
                 let minDistance, maxDistance;
                 if (isHeavy) {
-                    // Heavy load cuts range by ~30%
                     minDistance = (estPercent / 100) * 14; 
                     maxDistance = (estPercent / 100) * 21;
                 } else {
-                    // Normal load
                     minDistance = (estPercent / 100) * 20;
                     maxDistance = (estPercent / 100) * 30;
                 }
@@ -325,14 +312,14 @@
         }
 
         if (!found) {
-            if (volts > 66.7) {
+            if (volts > 66.4) {
                 batteryPercentEl.innerText = "100% (Surface)";
                 chargeTimeEl.innerText = "Unplugged";
-                readyTimeEl.innerText = "Ready Now";
+                readyTimeEl.innerText = "Fully Charged";
                 batteryFill.style.width = "100%";
                 batteryFill.style.backgroundColor = "var(--success)";
                 rangeDistanceEl.innerText = isHeavy ? "14 - 21 km" : "20 - 30 km";
-            } else if (volts < 52.5) {
+            } else if (volts < 50.0) {
                 batteryPercentEl.innerText = "EMPTY";
                 chargeTimeEl.innerText = "10+ hrs";
                 readyTimeEl.innerText = "--:--";
@@ -353,8 +340,6 @@
 
     voltageInput.addEventListener('input', calculateFromVolts);
     loadToggle.addEventListener('change', calculateFromVolts);
-
-    // Run once on page load
     calculateFromVolts();
 </script>
 
