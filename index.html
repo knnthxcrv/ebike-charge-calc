@@ -206,6 +206,30 @@
             text-transform: uppercase;
             text-align: center;
         }
+
+        /* NEW ODOMETER STYLE */
+        .odometer-container {
+            text-align: center;
+            background: #1a252f;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #34495e;
+        }
+        .odometer-label {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .odometer-value {
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--light);
+            font-family: 'Courier New', Courier, monospace; /* Digital clock look */
+        }
+
         .gps-data {
             display: flex;
             justify-content: space-between;
@@ -225,7 +249,7 @@
         .btn-group {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap; /* Allows buttons to wrap on very small screens */
+            flex-wrap: wrap;
         }
         button {
             flex: 1;
@@ -306,9 +330,15 @@
     <div class="gps-tracker">
         <h3>📍 GPS Trip Recorder</h3>
         
+        <!-- NEW ODOMETER -->
+        <div class="odometer-container">
+            <div class="odometer-label">Lifetime Odometer</div>
+            <div class="odometer-value" id="odometerValue">0.00 km</div>
+        </div>
+
         <div class="gps-data">
             <div class="gps-stat">
-                <div class="gps-stat-label">Distance</div>
+                <div class="gps-stat-label">Trip Distance</div>
                 <div class="gps-stat-value" id="gpsDistance">0.00 <span style="font-size:12px;">km</span></div>
             </div>
             <div class="gps-stat">
@@ -321,13 +351,13 @@
             <button class="btn-start" id="btnStartGps">Start</button>
             <button class="btn-pause" id="btnPauseGps">Pause</button>
             <button class="btn-stop" id="btnStopGps">Stop</button>
-            <button class="btn-reset" id="btnResetGps">Reset</button>
+            <button class="btn-reset" id="btnResetGps">Reset Trip</button>
         </div>
     </div>
 
     <div class="note">
         * Range is an estimate. Always keep a 20% buffer.<br>
-        * For GPS to work, your phone must have Location Services turned on.
+        * Odometer is saved permanently to your browser memory.
     </div>
 </div>
 
@@ -501,18 +531,26 @@
     roundTripToggle.addEventListener('change', checkTrip); 
     calculateFromVolts();
 
-    // --- GPS TRACKER LOGIC WITH PAUSE/RESUME ---
+    // --- GPS TRACKER & ODOMETER LOGIC ---
     let watchId = null;
-    let totalDistance = 0; 
+    let tripDistance = 0; 
+    let lifetimeOdometer = 0; // NEW: Odometer variable
     let lastPosition = null;
-    let isPaused = false; // NEW: Keeps track of pause state
+    let isPaused = false; 
 
     const gpsDistanceEl = document.getElementById('gpsDistance');
     const gpsSpeedEl = document.getElementById('gpsSpeed');
+    const odometerValueEl = document.getElementById('odometerValue'); // NEW
     const btnStart = document.getElementById('btnStartGps');
     const btnPause = document.getElementById('btnPauseGps');
     const btnStop = document.getElementById('btnStopGps');
     const btnReset = document.getElementById('btnResetGps');
+
+    // Load saved Odometer from phone memory
+    if(localStorage.getItem('ebike_odometer')) {
+        lifetimeOdometer = parseFloat(localStorage.getItem('ebike_odometer'));
+        odometerValueEl.innerText = lifetimeOdometer.toFixed(2) + " km";
+    }
 
     function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
         const R = 6371; 
@@ -527,7 +565,6 @@
     }
 
     function onGpsSuccess(position) {
-        // If paused, ignore GPS updates so distance doesn't increase while parked
         if (isPaused) return; 
 
         const lat = position.coords.latitude;
@@ -543,9 +580,18 @@
 
         if (lastPosition) {
             const dist = calculateHaversineDistance(lastPosition.lat, lastPosition.lon, lat, lon);
+            
+            // Only add distance if moved more than 2 meters (stops GPS drift while standing still)
             if (dist > 0.002) { 
-                totalDistance += dist;
-                gpsDistanceEl.innerHTML = `${totalDistance.toFixed(2)} <span style="font-size:12px;">km</span>`;
+                tripDistance += dist;
+                lifetimeOdometer += dist; // Add to lifetime odometer
+                
+                // Update Screen
+                gpsDistanceEl.innerHTML = `${tripDistance.toFixed(2)} <span style="font-size:12px;">km</span>`;
+                odometerValueEl.innerText = lifetimeOdometer.toFixed(2) + " km";
+                
+                // Save new odometer total to phone memory
+                localStorage.setItem('ebike_odometer', lifetimeOdometer);
             }
         }
         lastPosition = { lat, lon };
@@ -564,7 +610,6 @@
         lastPosition = null; 
         isPaused = false;
         
-        // UI changes
         btnStart.style.display = 'none';
         btnPause.style.display = 'block';
         btnStop.style.display = 'block';
@@ -578,17 +623,15 @@
 
     function pauseGps() {
         if (isPaused) {
-            // RESUME
             isPaused = false;
-            lastPosition = null; // Reset last position so it doesn't draw a huge line across the map after resuming
+            lastPosition = null; 
             btnPause.innerText = "Pause";
-            btnPause.className = "btn-pause"; // Revert to yellow
+            btnPause.className = "btn-pause"; 
         } else {
-            // PAUSE
             isPaused = true;
             gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px;">km/h</span>`;
             btnPause.innerText = "Resume";
-            btnPause.className = "btn-start"; // Change to green to indicate resume action
+            btnPause.className = "btn-start"; 
         }
     }
 
@@ -599,22 +642,24 @@
         }
         isPaused = false;
         
-        // UI changes
         btnStart.style.display = 'block';
         btnPause.style.display = 'none';
         btnStop.style.display = 'none';
-        btnPause.innerText = "Pause"; // Reset text for next time
+        btnPause.innerText = "Pause"; 
         btnPause.className = "btn-pause";
         
         gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px;">km/h</span>`;
     }
 
     function resetGps() {
-        stopGps();
-        totalDistance = 0;
-        lastPosition = null;
-        gpsDistanceEl.innerHTML = `0.00 <span style="font-size:12px;">km</span>`;
-        gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px;">km/h</span>`;
+        // Reset current trip distance only (NOT the odometer)
+        if(confirm("Are you sure you want to reset the current trip distance to 0? (Your lifetime odometer will be kept safe)")) {
+            stopGps();
+            tripDistance = 0;
+            lastPosition = null;
+            gpsDistanceEl.innerHTML = `0.00 <span style="font-size:12px;">km</span>`;
+            gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px;">km/h</span>`;
+        }
     }
 
     btnStart.addEventListener('click', startGps);
