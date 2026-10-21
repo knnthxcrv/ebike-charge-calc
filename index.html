@@ -24,9 +24,9 @@
             --danger: #e84118;
             --warning: #f39c12;
             --gps-blue: #00a8ff;
+            --perfect-green: #44bd32;
         }
 
-        /* OLED THEME OVERRIDES */
         body.oled-theme {
             --bg-color: #000000;
             --card-bg: #0a0a0a;
@@ -56,7 +56,6 @@
             width: 100%;
         }
 
-        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -64,199 +63,71 @@
             margin-bottom: 20px;
             padding-top: 10px;
         }
-        .header-text h1 {
-            color: var(--primary);
-            margin: 0;
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        .header-text p {
-            margin: 3px 0 0 0;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
+        .header-text h1 { color: var(--primary); margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .header-text p { margin: 3px 0 0 0; font-size: 12px; color: var(--text-muted); }
 
-        /* THEME TOGGLE BUTTON */
         .theme-toggle {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             color: var(--text-light);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            width: 45px; height: 45px; border-radius: 50%;
+            font-size: 20px; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
         .theme-toggle:active { transform: scale(0.9); }
 
-        /* TABS NAVIGATION */
         .tabs {
-            display: flex;
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 5px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            border: 1px solid var(--card-border);
-            transition: background-color 0.3s ease;
+            display: flex; background: var(--card-bg); border-radius: 12px;
+            padding: 5px; margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 1px solid var(--card-border);
         }
         .tab-btn {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            background: transparent;
-            color: var(--text-muted);
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            flex: 1; padding: 12px; text-align: center; background: transparent;
+            color: var(--text-muted); border: none; border-radius: 8px;
+            font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
         }
-        .tab-btn.active {
-            background: var(--primary);
-            color: #000;
-            box-shadow: 0 2px 8px rgba(251, 197, 49, 0.4);
-        }
+        .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 2px 8px rgba(251, 197, 49, 0.4); }
 
-        /* TAB CONTENT */
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS */
         .card {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-            border: 1px solid var(--card-border);
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            background-color: var(--card-bg); padding: 20px; border-radius: 16px;
+            margin-bottom: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            border: 1px solid var(--card-border); transition: background-color 0.3s ease;
         }
         .card-title {
-            font-size: 13px;
-            text-transform: uppercase;
-            color: var(--primary);
-            font-weight: 800;
-            margin-top: 0;
-            margin-bottom: 15px;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 13px; text-transform: uppercase; color: var(--primary);
+            font-weight: 800; margin-top: 0; margin-bottom: 15px;
+            letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;
         }
 
-        /* INPUTS */
         input[type="number"] {
-            width: 100%;
-            padding: 15px;
-            font-size: 22px;
-            font-weight: 800;
-            text-align: center;
-            border-radius: 12px;
-            border: 2px solid #718093;
-            background-color: var(--input-bg);
-            color: var(--primary);
-            transition: border 0.3s ease, background-color 0.3s ease;
-            outline: none;
+            width: 100%; padding: 15px; font-size: 22px; font-weight: 800;
+            text-align: center; border-radius: 12px; border: 2px solid #718093;
+            background-color: var(--input-bg); color: var(--primary);
+            transition: border 0.3s ease; outline: none;
         }
-        input[type="number"]:focus {
-            border-color: var(--primary);
-        }
+        input[type="number"]:focus { border-color: var(--primary); }
 
-        /* BATTERY & RESULTS */
-        .results-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .result-box {
-            background: rgba(0,0,0,0.2);
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-        }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .result-box { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; text-align: center; }
         body.oled-theme .result-box { background: #111; }
-        
-        .result-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .result-value {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--text-light);
-        }
+        .result-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 5px; }
+        .result-value { font-size: 18px; font-weight: 800; color: var(--text-light); }
         .result-value.highlight { color: var(--success); }
         .result-value.warning { color: var(--warning); }
 
-        .battery-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 15px 0;
-        }
-        .battery-body {
-            width: 140px;
-            height: 50px;
-            border: 4px solid var(--text-muted);
-            border-radius: 8px;
-            padding: 3px;
-            position: relative;
-        }
-        .battery-body::after {
-            content: '';
-            position: absolute;
-            right: -12px;
-            top: 12px;
-            width: 8px;
-            height: 20px;
-            background: var(--text-muted);
-            border-radius: 0 4px 4px 0;
-        }
-        .battery-fill {
-            height: 100%;
-            background-color: var(--success);
-            border-radius: 4px;
-            width: 100%;
-            transition: width 0.4s ease, background-color 0.4s ease;
-        }
+        .battery-container { display: flex; align-items: center; justify-content: center; margin: 15px 0; }
+        .battery-body { width: 140px; height: 50px; border: 4px solid var(--text-muted); border-radius: 8px; padding: 3px; position: relative; }
+        .battery-body::after { content: ''; position: absolute; right: -12px; top: 12px; width: 8px; height: 20px; background: var(--text-muted); border-radius: 0 4px 4px 0; }
+        .battery-fill { height: 100%; background-color: var(--success); border-radius: 4px; width: 100%; transition: width 0.4s ease, background-color 0.4s ease; }
 
-        /* TOGGLES */
-        .toggle-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 15px;
-            background: rgba(0,0,0,0.2);
-            padding: 10px 15px;
-            border-radius: 10px;
-        }
+        .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 10px; }
         body.oled-theme .toggle-row { background: #111; }
-        
-        .toggle-row span {
-            font-size: 13px;
-            font-weight: 600;
-        }
+        .toggle-row span { font-size: 13px; font-weight: 600; }
         .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #718093; transition: .4s; border-radius: 24px; }
@@ -264,102 +135,95 @@
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(22px); }
 
-        /* TRIP PLANNER ALERT */
-        .trip-alert {
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-align: center;
-            font-size: 13px;
-            margin-top: 10px;
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
+        .trip-alert { padding: 12px; border-radius: 8px; font-weight: 600; text-align: center; font-size: 13px; margin-top: 10px; display: none; animation: fadeIn 0.3s ease; }
         .alert-safe { background-color: rgba(76, 209, 55, 0.2); color: var(--success); border: 1px solid var(--success); display: block; }
         .alert-danger { background-color: rgba(232, 65, 24, 0.2); color: var(--danger); border: 1px solid var(--danger); display: block; }
 
-        /* GPS TAB STYLES */
-        .odometer-display {
-            background: #000;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            border: 2px solid var(--card-border);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-            margin-bottom: 15px;
-        }
-        .odometer-label {
-            font-size: 11px;
-            color: var(--primary);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .odometer-value {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--gps-blue);
-            text-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
-        }
+        .odometer-display { background: #000; padding: 20px; border-radius: 12px; text-align: center; border: 2px solid var(--card-border); box-shadow: inset 0 0 10px rgba(0,0,0,0.8); margin-bottom: 15px; }
+        .odometer-label { font-size: 11px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
+        .odometer-value { font-family: 'Courier New', Courier, monospace; font-size: 32px; font-weight: bold; color: var(--gps-blue); text-shadow: 0 0 10px rgba(0, 168, 255, 0.5); }
 
-        .gps-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .gps-stat-box {
-            background: rgba(0,0,0,0.2);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-        }
+        .gps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .gps-stat-box { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; text-align: center; }
         body.oled-theme .gps-stat-box { background: #111; }
+        .gps-stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 5px; }
+        .gps-stat-value { font-size: 24px; font-weight: 800; color: var(--text-light); }
 
-        .gps-stat-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-        .gps-stat-value {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--text-light);
-        }
-
-        /* BUTTONS */
-        .btn-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        button {
-            padding: 15px;
-            font-size: 15px;
-            font-weight: 800;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button { padding: 15px; font-size: 15px; font-weight: 800; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.5px; }
         button:active { transform: scale(0.96); }
         .btn-start { background-color: var(--success); color: white; }
         .btn-pause { background-color: var(--primary); color: #000; display: none; }
         .btn-stop { background-color: var(--danger); color: white; display: none; }
         .btn-reset { background-color: #718093; color: white; }
 
-        .footer-note {
-            font-size: 11px;
-            color: #718093;
-            text-align: center;
-            margin-top: 20px;
-            line-height: 1.4;
+        /* NEW BATTERY CARE STYLES */
+        .health-bar-container {
+            margin: 15px 0;
+            background: #000;
+            border-radius: 8px;
+            height: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #333;
         }
+        .health-bar-segment {
+            position: absolute;
+            height: 100%;
+        }
+        .health-bar-segment.danger { background: rgba(232, 65, 24, 0.6); width: 30%; left: 0; }
+        .health-bar-segment.warning { background: rgba(243, 156, 18, 0.6); width: 10%; left: 30%; }
+        .health-bar-segment.perfect { background: rgba(68, 189, 50, 0.6); width: 30%; left: 40%; }
+        .health-bar-segment.warning2 { background: rgba(243, 156, 18, 0.6); width: 10%; left: 70%; }
+        .health-bar-segment.danger2 { background: rgba(232, 65, 24, 0.6); width: 20%; left: 80%; }
+        
+        .health-bar-indicator {
+            position: absolute;
+            width: 4px;
+            height: 100%;
+            background: white;
+            box-shadow: 0 0 5px white;
+            transition: left 0.4s ease;
+        }
+        .health-status-text {
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .rest-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .rest-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--text-muted);
+            color: var(--text-light);
+            padding: 12px 5px;
+            font-size: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .rest-btn:active { background: #444; }
+        
+        .timer-display {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            background: rgba(251, 197, 49, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .timer-display.active { display: block; animation: fadeIn 0.3s ease; }
+        .timer-text { font-size: 12px; color: var(--primary); text-transform: uppercase; font-weight: 800; margin-bottom: 5px; }
+        .timer-countdown { font-size: 28px; font-weight: 800; color: white; font-family: 'Courier New', Courier, monospace; }
+
+        .footer-note { font-size: 11px; color: #718093; text-align: center; margin-top: 20px; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -370,11 +234,9 @@
             <h1>Periwinkle</h1>
             <p>60V 20Ah E-Trike</p>
         </div>
-        <!-- THEME TOGGLE BUTTON -->
         <button class="theme-toggle" id="themeToggle" title="Toggle OLED Mode">🌙</button>
     </div>
 
-    <!-- TAB NAVIGATION -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('chargeTab')">⚡ Charge & Range</button>
         <button class="tab-btn" onclick="switchTab('gpsTab')">📍 GPS & Odometer</button>
@@ -415,6 +277,32 @@
                     <input type="checkbox" id="loadToggle">
                     <span class="slider"></span>
                 </label>
+            </div>
+        </div>
+
+        <!-- NEW BATTERY CARE CARD IMPLEMENTING THE IMAGE RULES -->
+        <div class="card">
+            <h3 class="card-title">🩺 Battery Care Rules</h3>
+            
+            <div class="health-status-text" id="healthStatusText" style="color: var(--perfect-green);">Perfect time to charge!</div>
+            
+            <div class="health-bar-container">
+                <div class="health-bar-segment danger"></div>
+                <div class="health-bar-segment warning"></div>
+                <div class="health-bar-segment perfect"></div>
+                <div class="health-bar-segment warning2"></div>
+                <div class="health-bar-segment danger2"></div>
+                <div class="health-bar-indicator" id="healthBarIndicator" style="left: 100%;"></div>
+            </div>
+
+            <div class="rest-buttons">
+                <button class="rest-btn" id="btnJustDrove">Just Finished Driving (Wait to Charge)</button>
+                <button class="rest-btn" id="btnJustCharged">Just Finished Charging (Wait to Ride)</button>
+            </div>
+
+            <div class="timer-display" id="restTimerDisplay">
+                <div class="timer-text" id="restTimerText">Wait to Plug In</div>
+                <div class="timer-countdown" id="restCountdown">30:00</div>
             </div>
         </div>
 
@@ -466,8 +354,7 @@
     </div>
 
     <div class="footer-note">
-        * Range and charging times are estimates. Always rely on your charger's green light.<br>
-        * Odometer is saved permanently to your browser.
+        * Based on Wayne's E-Bikes manual. Always rely on your charger's green light.
     </div>
 </div>
 
@@ -476,7 +363,6 @@
     const themeToggleBtn = document.getElementById('themeToggle');
     const body = document.body;
 
-    // Check memory for saved theme
     if (localStorage.getItem('ebike_theme') === 'oled') {
         body.classList.add('oled-theme');
         themeToggleBtn.innerText = '☀️';
@@ -485,7 +371,6 @@
 
     themeToggleBtn.addEventListener('click', () => {
         body.classList.toggle('oled-theme');
-        
         if (body.classList.contains('oled-theme')) {
             themeToggleBtn.innerText = '☀️';
             localStorage.setItem('ebike_theme', 'oled');
@@ -499,12 +384,8 @@
 
     // --- TAB SWITCHING LOGIC ---
     function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         event.target.classList.add('active');
     }
@@ -521,12 +402,12 @@
     const tripResultEl = document.getElementById('tripResult');
     const roundTripToggle = document.getElementById('roundTripToggle');
 
-    if(localStorage.getItem('ebike_voltage')) {
-        voltageInput.value = localStorage.getItem('ebike_voltage');
-    }
-    if(localStorage.getItem('ebike_load') === 'true') {
-        loadToggle.checked = true;
-    }
+    // New Battery Health Elements
+    const healthBarIndicator = document.getElementById('healthBarIndicator');
+    const healthStatusText = document.getElementById('healthStatusText');
+
+    if(localStorage.getItem('ebike_voltage')) { voltageInput.value = localStorage.getItem('ebike_voltage'); }
+    if(localStorage.getItem('ebike_load') === 'true') { loadToggle.checked = true; }
 
     const voltData = [
         [70.00, 66.4, "100%", 100, 0], 
@@ -579,19 +460,12 @@
                 batteryPercentEl.innerText = percentStr;
                 
                 batteryFill.style.width = estPercent + '%';
-                if (estPercent > 50) {
-                    batteryFill.style.backgroundColor = "var(--success)";
-                } else if (estPercent > 20) {
-                    batteryFill.style.backgroundColor = "var(--warning)";
-                } else {
-                    batteryFill.style.backgroundColor = "var(--danger)";
-                }
+                if (estPercent > 50) { batteryFill.style.backgroundColor = "var(--success)"; } 
+                else if (estPercent > 20) { batteryFill.style.backgroundColor = "var(--warning)"; } 
+                else { batteryFill.style.backgroundColor = "var(--danger)"; }
 
-                if (hoursNum === 0) {
-                    timerValueEl.innerText = "Ready";
-                } else {
-                    timerValueEl.innerText = hoursNum + " Hrs";
-                }
+                if (hoursNum === 0) { timerValueEl.innerText = "Ready"; } 
+                else { timerValueEl.innerText = hoursNum + " Hrs"; }
 
                 let minDistance, maxDistance;
                 if (isHeavy) {
@@ -604,13 +478,12 @@
                 
                 currentMaxRange = minDistance; 
 
-                if (estPercent === 100) {
-                    rangeDistanceEl.innerText = isHeavy ? "14 - 21 km" : "20 - 30 km";
-                } else if (estPercent === 0) {
-                     rangeDistanceEl.innerText = "Charge Now!";
-                } else {
-                    rangeDistanceEl.innerText = `${minDistance.toFixed(1)} - ${maxDistance.toFixed(1)} km`;
-                }
+                if (estPercent === 100) { rangeDistanceEl.innerText = isHeavy ? "14 - 21 km" : "20 - 30 km"; } 
+                else if (estPercent === 0) { rangeDistanceEl.innerText = "Charge Now!"; } 
+                else { rangeDistanceEl.innerText = `${minDistance.toFixed(1)} - ${maxDistance.toFixed(1)} km`; }
+                
+                // NEW: Update the Health Bar based on the rules in the image
+                updateHealthBar(estPercent);
                 
                 found = true;
                 break;
@@ -625,6 +498,7 @@
                 batteryFill.style.width = "100%";
                 batteryFill.style.backgroundColor = "var(--success)";
                 rangeDistanceEl.innerText = isHeavy ? "14 - 21 km" : "20 - 30 km";
+                updateHealthBar(100);
             } else if (volts < 50.0) {
                 currentMaxRange = 0;
                 batteryPercentEl.innerText = "EMPTY";
@@ -632,9 +506,34 @@
                 batteryFill.style.width = "0%";
                 batteryFill.style.backgroundColor = "var(--danger)";
                 rangeDistanceEl.innerText = "0 km";
+                updateHealthBar(0);
             }
         }
         checkTrip();
+    }
+
+    // NEW FUNCTION: Battery Health Logic
+    function updateHealthBar(percent) {
+        // Move the white indicator line
+        healthBarIndicator.style.left = percent + '%';
+
+        // Update the text based on the manual rules
+        if (percent >= 40 && percent <= 70) {
+            healthStatusText.innerText = "✅ PERFECT time to charge (40%-70%)";
+            healthStatusText.style.color = "var(--perfect-green)";
+        } else if (percent > 70 && percent < 80) {
+            healthStatusText.innerText = "⚠️ Above 70%. Wait until it drops to 70%.";
+            healthStatusText.style.color = "var(--warning)";
+        } else if (percent >= 80) {
+            healthStatusText.innerText = "🛑 Do NOT charge (Over 70%)";
+            healthStatusText.style.color = "var(--danger)";
+        } else if (percent >= 30 && percent < 40) {
+            healthStatusText.innerText = "⚠️ Getting low. Charge soon.";
+            healthStatusText.style.color = "var(--warning)";
+        } else {
+            healthStatusText.innerText = "🛑 TOO LOW! Do not drain below 30%.";
+            healthStatusText.style.color = "var(--danger)";
+        }
     }
 
     function checkTrip() {
@@ -648,15 +547,12 @@
         
         let actualDistance = tripDistance;
         let tripTypeText = "One-way";
-        if (roundTripToggle.checked) {
-            actualDistance = tripDistance * 2;
-            tripTypeText = "Round trip";
-        }
+        if (roundTripToggle.checked) { actualDistance = tripDistance * 2; tripTypeText = "Round trip"; }
 
         if (actualDistance <= currentMaxRange) {
             let remaining = currentMaxRange - actualDistance;
             tripResultEl.className = "trip-alert alert-safe";
-            tripResultEl.innerText = `✅ Safe ${tripTypeText} (${actualDistance} km). You'll have ~${remaining.toFixed(1)} km left.`;
+            tripResultEl.innerText = `✅ Safe ${tripTypeText} (${actualDistance} km). ~${remaining.toFixed(1)} km left.`;
         } else {
             tripResultEl.className = "trip-alert alert-danger";
             tripResultEl.innerText = `⚠️ WARNING: Too far for a ${tripTypeText.toLowerCase()} (${actualDistance} km). Charge first.`;
@@ -664,12 +560,8 @@
     }
 
     function resetDisplay() {
-        batteryPercentEl.innerText = "--";
-        timerValueEl.innerText = "--";
-        rangeDistanceEl.innerText = "--";
-        batteryFill.style.width = "0%";
-        currentMaxRange = 0;
-        checkTrip();
+        batteryPercentEl.innerText = "--"; timerValueEl.innerText = "--"; rangeDistanceEl.innerText = "--";
+        batteryFill.style.width = "0%"; currentMaxRange = 0; checkTrip();
     }
 
     voltageInput.addEventListener('input', calculateFromVolts);
@@ -677,6 +569,59 @@
     tripDistanceInput.addEventListener('input', checkTrip);
     roundTripToggle.addEventListener('change', checkTrip); 
     calculateFromVolts();
+
+    // --- NEW: REST TIMER LOGIC ---
+    let countdownInterval = null;
+    const restTimerDisplay = document.getElementById('restTimerDisplay');
+    const restTimerText = document.getElementById('restTimerText');
+    const restCountdown = document.getElementById('restCountdown');
+    const btnJustDrove = document.getElementById('btnJustDrove');
+    const btnJustCharged = document.getElementById('btnJustCharged');
+
+    function startRestTimer(type) {
+        // Clear any existing timer
+        if (countdownInterval) clearInterval(countdownInterval);
+
+        // 30 minutes in seconds
+        let timeLeft = 30 * 60; 
+        
+        restTimerDisplay.classList.add('active');
+        
+        if (type === 'drove') {
+            restTimerText.innerText = "Wait to Plug In (Cool Down)";
+        } else {
+            restTimerText.innerText = "Wait to Ride (Battery Rest)";
+        }
+
+        function updateTimer() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            
+            // Format with leading zeros
+            restCountdown.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                restCountdown.innerText = "DONE!";
+                restCountdown.style.color = "var(--success)";
+            } else {
+                timeLeft--;
+            }
+        }
+
+        updateTimer(); // Run immediately
+        countdownInterval = setInterval(updateTimer, 1000);
+    }
+
+    btnJustDrove.addEventListener('click', () => {
+        restCountdown.style.color = "white"; // Reset color
+        startRestTimer('drove');
+    });
+
+    btnJustCharged.addEventListener('click', () => {
+        restCountdown.style.color = "white"; // Reset color
+        startRestTimer('charged');
+    });
 
     // --- GPS TRACKER & ODOMETER LOGIC ---
     let watchId = null;
@@ -746,10 +691,7 @@
     }
 
     function startGps() {
-        if (!navigator.geolocation) {
-            alert("GPS is not supported by your browser.");
-            return;
-        }
+        if (!navigator.geolocation) { alert("GPS is not supported by your browser."); return; }
         lastPosition = null; 
         isPaused = false;
         
@@ -761,31 +703,23 @@
         btnStop.style.gridColumn = "span 1";
         
         watchId = navigator.geolocation.watchPosition(onGpsSuccess, onGpsError, {
-            enableHighAccuracy: true,
-            maximumAge: 0,
-            timeout: 10000
+            enableHighAccuracy: true, maximumAge: 0, timeout: 10000
         });
     }
 
     function pauseGps() {
         if (isPaused) {
-            isPaused = false;
-            lastPosition = null; 
-            btnPause.innerText = "⏸ Pause";
-            btnPause.className = "btn-pause"; 
+            isPaused = false; lastPosition = null; 
+            btnPause.innerText = "⏸ Pause"; btnPause.className = "btn-pause"; 
         } else {
             isPaused = true;
             gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px; color:var(--text-muted);">km/h</span>`;
-            btnPause.innerText = "▶ Resume";
-            btnPause.className = "btn-start"; 
+            btnPause.innerText = "▶ Resume"; btnPause.className = "btn-start"; 
         }
     }
 
     function stopGps() {
-        if (watchId !== null) {
-            navigator.geolocation.clearWatch(watchId);
-            watchId = null;
-        }
+        if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
         isPaused = false;
         
         btnStart.style.display = 'block';
@@ -803,8 +737,7 @@
     function resetGps() {
         if(confirm("Reset current trip distance to 0? (Your lifetime odometer will be kept safe)")) {
             stopGps();
-            tripDistance = 0;
-            lastPosition = null;
+            tripDistance = 0; lastPosition = null;
             gpsDistanceEl.innerHTML = `0.00 <span style="font-size:12px; color:var(--text-muted);">km</span>`;
             gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px; color:var(--text-muted);">km/h</span>`;
         }
