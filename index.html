@@ -9,6 +9,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Google Fonts -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
@@ -106,7 +109,7 @@
         .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #718093; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(22px); }
 
@@ -117,6 +120,16 @@
         .odometer-display { background: #000; padding: 20px; border-radius: 12px; text-align: center; border: 2px solid var(--card-border); box-shadow: inset 0 0 10px rgba(0,0,0,0.8); margin-bottom: 15px; }
         .odometer-label { font-size: 11px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
         .odometer-value { font-family: 'Courier New', Courier, monospace; font-size: 32px; font-weight: bold; color: var(--gps-blue); text-shadow: 0 0 10px rgba(0, 168, 255, 0.5); }
+
+        /* NEW MAP STYLES */
+        #map-container {
+            width: 100%;
+            height: 250px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 2px solid var(--card-border);
+            z-index: 1; /* Keeps map behind modals */
+        }
 
         .gps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .gps-stat-box { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; text-align: center; }
@@ -270,6 +283,9 @@
         <div class="card">
             <h3 class="card-title">📍 Live GPS Tracking</h3>
             
+            <!-- NEW MAP INTERFACE -->
+            <div id="map-container"></div>
+
             <div class="gps-grid">
                 <div class="gps-stat-box">
                     <div class="gps-stat-label">Trip Distance</div>
@@ -293,9 +309,12 @@
 
     <div class="footer-note">
         * Calibrated to real-world tests (61.6V to 66.3V = 6.5 hrs).<br>
-        * Always rely on your charger's green light.
+        * Map tiles require internet connection.
     </div>
 </div>
+
+<!-- Leaflet Map JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
     // --- THEME TOGGLE LOGIC ---
@@ -327,9 +346,14 @@
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         event.target.classList.add('active');
+        
+        // Fix for map loading incorrectly when hidden
+        if(tabId === 'gpsTab') {
+            setTimeout(() => { map.invalidateSize(); }, 100);
+        }
     }
 
-    // --- CALCULATOR LOGIC ---
+    // --- CALCULATOR LOGIC (Same as before) ---
     const voltageInput = document.getElementById('voltageInput');
     const loadToggle = document.getElementById('loadToggle');
     const batteryPercentEl = document.getElementById('batteryPercent');
@@ -347,9 +371,6 @@
     if(localStorage.getItem('ebike_voltage')) { voltageInput.value = localStorage.getItem('ebike_voltage'); }
     if(localStorage.getItem('ebike_load') === 'true') { loadToggle.checked = true; }
 
-    // UPDATED: Calibrated based on YOUR real-world tests
-    // Test 1: 62.7V to 66.1V = 5 hrs
-    // Test 2: 61.6V to 66.3V = 6.5 hrs
     const voltData = [
         [70.00, 66.4, "100%", 100, 0], 
         [66.3, 66.0, "95%", 95, 6.0],
@@ -359,7 +380,7 @@
         [63.8, 63.1, "75%", 75, 7.0],
         [63.0, 62.4, "70%", 70, 7.0], 
         [62.3, 61.7, "65%", 65, 7.5],
-        [61.6, 61.0, "60%", 60, 7.5], // Calibrated: 61.6V + 6.5 hrs reaches 95% (~66.3V)
+        [61.6, 61.0, "60%", 60, 7.5], 
         [60.9, 60.3, "55%", 55, 8.0],
         [60.2, 59.6, "50%", 50, 8.0],
         [59.5, 58.9, "45%", 45, 8.5],
@@ -518,20 +539,13 @@
     const timerCountdownText = document.getElementById('timerCountdownText');
     const timerTargetText = document.getElementById('timerTargetText');
     const btnCancelTimer = document.getElementById('btnCancelTimer');
-
     let timerInterval = null;
 
     function startChargingTimer() {
-        if (currentChargeHours === 0) {
-            alert("Battery is already full! No need to charge.");
-            return;
-        }
-
+        if (currentChargeHours === 0) { alert("Battery is already full!"); return; }
         let totalMinutes = (currentChargeHours * 60) + 30;
         const endTime = new Date(Date.now() + totalMinutes * 60000);
         localStorage.setItem('ebike_timer_end', endTime.getTime());
-        localStorage.setItem('ebike_timer_total', totalMinutes);
-
         runTimer();
     }
 
@@ -556,13 +570,8 @@
                 timerPhaseText.style.color = "var(--success)";
                 timerCountdownText.innerText = "00:00:00";
                 localStorage.removeItem('ebike_timer_end');
-                
                 try { new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play(); } catch(e) {}
-                
-                setTimeout(() => {
-                    activeTimerBox.classList.remove('active');
-                    btnStartChargeTimer.style.display = 'flex';
-                }, 10000); 
+                setTimeout(() => { activeTimerBox.classList.remove('active'); btnStartChargeTimer.style.display = 'flex'; }, 10000); 
                 return;
             }
 
@@ -570,8 +579,7 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            timerCountdownText.innerText = 
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timerCountdownText.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
             const totalMsLeft = distance;
             const restMs = 30 * 60 * 1000;
@@ -589,28 +597,27 @@
     }
 
     btnStartChargeTimer.addEventListener('click', startChargingTimer);
-
     btnCancelTimer.addEventListener('click', () => {
         if(confirm("Cancel the active timer?")) {
             clearInterval(timerInterval);
             localStorage.removeItem('ebike_timer_end');
-            localStorage.removeItem('ebike_timer_total');
             activeTimerBox.classList.remove('active');
             btnStartChargeTimer.style.display = 'flex';
-            timerPhaseText.innerText = "Charging...";
-            timerCountdownText.innerText = "00:00:00";
-            timerCountdownText.style.color = "white";
         }
     });
-
     if (localStorage.getItem('ebike_timer_end')) { runTimer(); }
 
-    // --- GPS TRACKER & ODOMETER LOGIC ---
+    // --- MAP & GPS TRACKER LOGIC ---
     let watchId = null;
     let tripDistance = 0; 
     let lifetimeOdometer = 0; 
     let lastPosition = null;
     let isPaused = false; 
+
+    // Map Variables
+    let map;
+    let polyline;
+    let currentMarker;
 
     const gpsDistanceEl = document.getElementById('gpsDistance');
     const gpsSpeedEl = document.getElementById('gpsSpeed');
@@ -624,6 +631,23 @@
         lifetimeOdometer = parseFloat(localStorage.getItem('ebike_odometer'));
         odometerValueEl.innerText = lifetimeOdometer.toFixed(2) + " km";
     }
+
+    // Initialize Map
+    function initMap() {
+        // Default to a central location (e.g., Manila) before GPS kicks in
+        map = L.map('map-container').setView([14.5995, 120.9842], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Initialize the path line
+        polyline = L.polyline([], {color: 'var(--gps-blue)', weight: 5, opacity: 0.8}).addTo(map);
+    }
+
+    // Call init when page loads
+    initMap();
 
     function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
         const R = 6371; 
@@ -643,7 +667,9 @@
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
         const speedMps = position.coords.speed;
+        const newLatLng = [lat, lon];
 
+        // Update Speed
         if (speedMps !== null && speedMps >= 0) {
             const speedKmh = speedMps * 3.6;
             gpsSpeedEl.innerHTML = `${speedKmh.toFixed(1)} <span style="font-size:12px; color:var(--text-muted);">km/h</span>`;
@@ -651,17 +677,30 @@
             gpsSpeedEl.innerHTML = `-- <span style="font-size:12px; color:var(--text-muted);">km/h</span>`;
         }
 
+        // Update Map Position
+        map.setView(newLatLng, 17); // 17 is a good street-level zoom
+        if (!currentMarker) {
+            currentMarker = L.circleMarker(newLatLng, {
+                radius: 8, fillColor: "#fff", color: "#00a8ff", weight: 3, opacity: 1, fillOpacity: 0.8
+            }).addTo(map);
+        } else {
+            currentMarker.setLatLng(newLatLng);
+        }
+
+        // Calculate Distance & Draw Path
         if (lastPosition) {
             const dist = calculateHaversineDistance(lastPosition.lat, lastPosition.lon, lat, lon);
             
-            if (dist > 0.002) { 
+            if (dist > 0.002) { // Ignore tiny jumps < 2 meters
                 tripDistance += dist;
                 lifetimeOdometer += dist;
                 
                 gpsDistanceEl.innerHTML = `${tripDistance.toFixed(2)} <span style="font-size:12px; color:var(--text-muted);">km</span>`;
                 odometerValueEl.innerText = lifetimeOdometer.toFixed(2) + " km";
-                
                 localStorage.setItem('ebike_odometer', lifetimeOdometer);
+
+                // Add point to map line
+                polyline.addLatLng(newLatLng);
             }
         }
         lastPosition = { lat, lon };
@@ -717,11 +756,16 @@
     }
 
     function resetGps() {
-        if(confirm("Reset current trip distance to 0? (Your lifetime odometer will be kept safe)")) {
+        if(confirm("Reset current trip? (Your lifetime odometer will be kept safe)")) {
             stopGps();
             tripDistance = 0; lastPosition = null;
             gpsDistanceEl.innerHTML = `0.00 <span style="font-size:12px; color:var(--text-muted);">km</span>`;
             gpsSpeedEl.innerHTML = `0.0 <span style="font-size:12px; color:var(--text-muted);">km/h</span>`;
+            
+            // Clear the map line
+            if (polyline) {
+                polyline.setLatLngs([]);
+            }
         }
     }
 
